@@ -3,6 +3,7 @@ import {createRef} from "react";
 import {useStateContext} from "../context/ContextProvider.jsx";
 import { useState } from "react";
 import axiosClient from "../axios-client.js";
+//import { c } from "vite/dist/node/types.d-aGj9QkWt.js";
 function Login() {
     const emailRef = createRef()
     const passwordRef = createRef()
@@ -16,7 +17,7 @@ function Login() {
           email: emailRef.current.value,
           password: passwordRef.current.value,
         }
-
+     console.log(payload);
         axiosClient.post('/login', payload)
       .then(({data}) => {
         setUser(data.user)

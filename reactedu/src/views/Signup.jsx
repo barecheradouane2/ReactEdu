@@ -24,12 +24,14 @@ function SignUp() {
         password: passwordRef.current.value,
         password_confirmation: passwordConfirmationRef.current.value,
       }
-      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-      axiosClient.post('/register', payload , {
-        headers: {
-          'X-CSRF-TOKEN': csrfToken  // Include the CSRF token in the headers
-        }
-      })
+      // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+      // , {
+      //   headers: {
+      //     'X-CSRF-TOKEN': csrfToken  // Include the CSRF token in the headers
+      //   }
+      // }
+      axiosClient.post('/register', payload )
         .then(({data}) => {
             console.log(payload);
           setUser(data.user)
