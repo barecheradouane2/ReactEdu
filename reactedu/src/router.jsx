@@ -21,6 +21,7 @@ import Friends from "./views/Friends.jsx";
 import Settings from "./views/Settings.jsx";
 
 
+
 const router = createBrowserRouter([
   {
     path: "/", // Handle the root path

@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
-function SearchSchool({toggleSearchPopup}) {
+function SearchSchool({toggleSearchPopup,children}) {
     return (
         <DemoPaper variant="elevation"  sx={
             {padding:'10px',height:'200px',display:'flex'
@@ -22,7 +22,7 @@ function SearchSchool({toggleSearchPopup}) {
             }}
             onClick={toggleSearchPopup}
             ><SearchOutlinedIcon/></Button>
-            <Typography>JOIN SCHOOL</Typography>
+            <Typography>{children}</Typography>
             
             
             </DemoPaper>

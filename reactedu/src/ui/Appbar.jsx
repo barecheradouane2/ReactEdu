@@ -20,9 +20,12 @@ import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
-
+import { useStateContext } from "../context/ContextProvider";
 function Appbar({ drawerWidth, funshowdrawer }) {
   const [notif, setnotifi] = useState(false);
+  const { user } = useStateContext();
+  console.log(user);
+
   const notification = [
     {
       id: 1,
@@ -118,7 +121,7 @@ function Appbar({ drawerWidth, funshowdrawer }) {
               variant="h8"
               sx={{ mt: "10px", ml: "12px", mr: "8px", color: "black" }}
             >
-              Bareche
+               
             </Typography>
             {/* <Avatar
             sx={{ bgcolor: deepOrange[500] }}
@@ -142,7 +145,7 @@ function Appbar({ drawerWidth, funshowdrawer }) {
                   alt="Remy Sharp"
                   src="/broken-image.jpg"
                 >
-                  B
+                
                 </Avatar>
               </IconButton>
             </Tooltip>

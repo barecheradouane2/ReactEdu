@@ -1,6 +1,7 @@
 import { Link, Navigate,Outlet } from "react-router-dom"
 import {useStateContext} from "../context/ContextProvider";
 function DefaultLayout() {
+  // here we are getting the user and token from the context
     const {user, token, setUser, setToken} = useStateContext();
 
     if (!token) {
