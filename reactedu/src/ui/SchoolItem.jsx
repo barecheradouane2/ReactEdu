@@ -7,28 +7,36 @@ import EditDelteMenue from "../utlis/EditDelteMenue";
 
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import {DeleteSchool} from "../services/apiSchool";
+import { DeleteSchool } from "../services/apiSchool";
+import { UpdateSchool } from "../services/apiSchool";
+import { toast } from "react-hot-toast";
 
-
-
-
-
-function SchoolItem({ school }) {
-
-
+function SchoolItem({ school, setschools }) {
   const queryClient = useQueryClient();
 
-  const { mutate, isLoading } = useMutation({
-      mutationFn: DeleteSchool,
-      onSuccess: () => {
-          console.log("School Deleted successfully");
-          queryClient.invalidateQueries("schools");
-      },
-      onError: () => {
-          console.log("Error Delete School");
-      }
+  const { mutate:deleteSchool } = useMutation({
+    mutationFn: DeleteSchool,
+    onSuccess: () => {
+      queryClient.invalidateQueries("schools");
+    },
   });
- 
+
+
+  
+
+  // const { mutate, isLoading } = useMutation({
+  //     mutationFn: DeleteSchool,
+  //     onSuccess: () => {
+
+  //         setschools(prevSchools => prevSchools.filter(item => item.id !== school.id));
+  //         toast.success("School Deleted Successfully");
+  //         queryClient.invalidateQueries("schools");
+  //     },
+  //     onError: () => {
+  //         console.log("Failed to delete school");
+  //     }
+  // });
+
   return (
     <DemoPaper
       variant="elevation"
@@ -40,7 +48,7 @@ function SchoolItem({ school }) {
         position: "relative",
       }}
     >
-     <EditDelteMenue mutate={mutate}  school={school} />
+      <EditDelteMenue  deleteSchool={deleteSchool} school={school} setschools={setschools} />
 
       <Link
         to={`/schools/${encodeURIComponent(school.name)}`}
@@ -58,7 +66,9 @@ function SchoolItem({ school }) {
           <Box sx={{ width: "100px", height: "100px", objectFit: "cover" }}>
             <img
               src={
-                school.image == null ? school.image : "../../public/school.webp"
+                school.image
+                  ? `http://localhost:8000/storage/${school.image}`
+                  : "../../public/school.webp"
               }
               style={{ width: "100%", height: "100%", borderRadius: "50%" }}
             />

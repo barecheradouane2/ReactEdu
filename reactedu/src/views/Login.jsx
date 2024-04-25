@@ -7,7 +7,7 @@ import axiosClient from "../axios-client.js";
 function Login() {
   const emailRef = createRef();
   const passwordRef = createRef();
-  const { setUser, setToken } = useStateContext();
+  const { setUser, setToken,_setUser } = useStateContext();
   const [message, setMessage] = useState(null);
 
   const onSubmit = (ev) => {
@@ -22,8 +22,10 @@ function Login() {
       await axiosClient
         .post("/login", payload)
         .then(({ data }) => {
-          setUser(data.data);
-          console.log(data);
+          setUser(payload);
+          _setUser(payload);
+
+          console.log(payload);
           setToken(data.token);
         })
         .catch((err) => {

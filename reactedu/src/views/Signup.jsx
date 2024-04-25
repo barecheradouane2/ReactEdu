@@ -9,7 +9,7 @@ function SignUp() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmationRef = useRef();
-  const { setUser, setToken } = useStateContext();
+  const { setUser, setToken,_setUser } = useStateContext();
   const [errors, setErrors] = useState(null);
 
   const onSubmit = (ev) => {
@@ -34,7 +34,8 @@ function SignUp() {
       .post("/register", payload)
       .then(({ data }) => {
         console.log(payload);
-        setUser(data.user);
+        setUser(payload);
+        _setUser(payload);
         setToken(data.token);
       })
       .catch((err) => {

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import InputFileUpload from "./InputFileUpload";
@@ -7,8 +7,15 @@ import { CreateSchool } from "../services/apiSchool";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { UpdateSchool } from "../services/apiSchool";
+import { useStateContext } from "../context/ContextProvider";
 
-function CreateSchoolPopup({showCreatePopup, closeshowCreatePopup,school}) {
+
+import Alert from '@mui/material/Alert';
+import toast from "react-hot-toast";
+
+function CreateSchoolPopup({showCreatePopup, closeshowCreatePopup,school,setschools}) {
+    let{user,setUser,_setUser }=useStateContext();
+  
     const schoolname = useRef(null);
     const schooladdress = useRef(null);
     // const schoolimg = useRef(null);
@@ -17,17 +24,26 @@ function CreateSchoolPopup({showCreatePopup, closeshowCreatePopup,school}) {
 
     const { mutate, isLoading } = useMutation({
         mutationFn: CreateSchool,
-        onSuccess: () => {
-            console.log("School created successfully");
+        onSuccess: (data) => {
+           
+            toast.success("School created successfully");
+            setschools(prevSchools => [...prevSchools, data]);
+           
+            
+         
             queryClient.invalidateQueries("schools");
         },
         onError: () => {
-            console.log("Error creating school");
+            
+            toast .error("Error  of creating school");
+         
         }
     });
     const { mutate:update ,isLoading: isUpdating } = useMutation({
         mutationFn: UpdateSchool,
         onSuccess: () => {
+            toast.success("School Updated Successfully");
+            setschools(prevSchools => prevSchools.filter(item => item.id !== school.id));
             console.log("School updated  successfully");
             queryClient.invalidateQueries("schools");
         },

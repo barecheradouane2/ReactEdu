@@ -8,6 +8,8 @@ import {ContextProvider} from './context/ContextProvider.jsx'
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { Toaster } from 'react-hot-toast'
+
 
 const queryclient =new QueryClient({
   defaultOptions: {
@@ -24,6 +26,36 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ReactQueryDevtools initialIsOpen={false} />
      <ContextProvider>
      <RouterProvider router={router}/>
+     <Toaster
+        position="top-center"
+        containerStyle={{margin: '50px'}}
+        gutter={8}
+        toastOptions={{
+          success: {
+            duration: 3000,
+            theme: {
+              primary: 'green',
+              secondary: 'black',
+            },
+          },
+          error: {
+            duration: 3000,
+            theme: {
+              primary: 'red',
+              secondary: 'black',
+            },
+          },
+          style: {
+          fontSize: '16px',
+          padding: '16px 24px',
+          maxWidth: '400px',
+
+          },
+          } }
+
+       
+     
+     />
      </ContextProvider> 
      </QueryClientProvider>
   </React.StrictMode>
