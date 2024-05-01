@@ -1,132 +1,98 @@
-import { Grid } from "@mui/material"
-//import { s } from "vite/dist/node/types.d-aGj9QkWt"
-import SchoolItem from "./SchoolItem"
-import CreateSCard from "../ui/CreateSCard"
-
+import { Grid } from "@mui/material";
+import SchoolItem from "./SchoolItem";
+import CreateSCard from "../ui/CreateSCard";
 import SearchSchool from "./SearchSchool";
-
 import CreateSchoolPopup from "./CreateSchoolPopup";
 import SearchSchoolPopup from "./SearchSchoolPopup";
-
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query"; // Assuming you're using tanstack/react-query
 import { getSchools } from "../services/apiSchool";
-
 import JoinSchoolPopup from "../utlis/JoinSchoolPopup";
-
-import {useStateContext} from "../context/ContextProvider";
-import { useEffect } from "react";
-import axiosClient from "../axios-client";
-
-
-
+import { useStateContext } from "../context/ContextProvider";
+import { login } from "../services/apiauth";
+import Loading from "../utlis/Loading";
+import JoinSchoolClassPopup from "../utlis/JoinSchoolClassPopup";
+import ClassItem from "./ClassItem";
 
 function SchoolCards() {
+  const [showCreatePopup, setShowCreatePopup] = useState(false);
+  const [showSearchPopup, setShowSearchPopup] = useState(false);
+  const [showJoinPopup, setShowJoinPopup] = useState(false);
 
-    const [showCreatePopup, setShowCreatePopup] = useState(false);
-    const [showSearchPopup, setShowSearchPopup] = useState(false);
-    const [showJoinPopup, setShowJoinPopup] = useState(false);
+  const { user } = useStateContext();
 
-    const [schools,setschools] = useState([]);
+  const fetchUserData = async () => {
+    try {
+      const response = await login(user);
 
-
-     const {user} = useStateContext();
-
-
-     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axiosClient.post("/login", user); // Assuming user data contains login credentials
-                const userData = response.data; // Assuming the response contains user data including schools
-                const userSchools = userData.data.schools || []; // Extract schools from user data
-                setschools(userSchools); // Set user's schools in state
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-            }
-        };
-
-        fetchData(); // Call the function to fetch user data when the component mounts
-    }, [schools]); 
-
-     
-
-     
-    
-    const funcshowCreatePopup=()=>{
-        setShowCreatePopup(true);
+      return response;
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      throw error;
     }
-    const closeshowCreatePopup=()=>{
-        setShowCreatePopup(false);
-    }
+  };
 
-    const toggleSearchPopup = () => {
-        setShowSearchPopup(!showSearchPopup);
-      };
-    
-  const {data:x}= useQuery({
-    queryKey: ['schools'],
-    queryFn: getSchools
-})
+  const { isLoading, data: userData } = useQuery(["userData"], fetchUserData);
 
+  const { data: fetchedSchools } = useQuery(["schools"], getSchools);
+  if (isLoading) return <Loading />;
 
+  const funcshowCreatePopup = () => {
+    setShowCreatePopup(true);
+  };
 
-//   const schools = [
+  const closeshowCreatePopup = () => {
+    setShowCreatePopup(false);
+  };
 
-//     {
-//         id : 1,
-//         name: "ثانوية محمد بوضياف",
-//         address: "بلدية فرجيوة ولاية ميلة ",
-//         image: "https://source.unsplash.com/random",
-//         admin_id: 1
+  const toggleSearchPopup = () => {
+    setShowSearchPopup(!showSearchPopup);
+  };
 
-//     },
-//     {
+  const toggleJoinPopup = () => {
+    setShowJoinPopup(!showJoinPopup);
+  };
 
-//         id : 2,
-//         name: "ابتدائية عبد الرزاق ",
-//         address: "فرجيوة -ميلة ",
-//         image: "https://source.unsplash.com/random",
-//         admin_id: 2
-
-//     },
-//     {
-//         id : 3,
-//         name: "متوسطة خليلي سماعيل ",
-//         address: "فرجيوة -ميلة ",
-//         image: "https://source.unsplash.com/random",
-//         admin_id: 3
-//     }
-//   ];
-
-    return (
-
-        
-        <Grid container spacing={2}  sx={{padding:'25px'}}>
-
-           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <CreateSCard funcshowCreatePopup={funcshowCreatePopup} />
-            <CreateSchoolPopup showCreatePopup={showCreatePopup}  closeshowCreatePopup={closeshowCreatePopup} setschools={setschools}/>
-           </Grid>
-
-           <Grid item xs={12} sm={6} md={4} lg={3}>
-           <SearchSchool   toggleSearchPopup={toggleSearchPopup} >Search</SearchSchool   >
-            <SearchSchoolPopup showSearchPopup={showSearchPopup} toggleSearchPopup={toggleSearchPopup}/>
-           </Grid>
-
-           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <SearchSchool   toggleSearchPopup={toggleSearchPopup} >Join</SearchSchool   >
-            <JoinSchoolPopup showSearchPopup={showSearchPopup} toggleSearchPopup={toggleSearchPopup}/>
-           </Grid>
-
-
-           {schools.map(school => (
-                <Grid item key={school.id} xs={12} sm={6} md={4} lg={3}>
-                    <SchoolItem school={school}  setschools={setschools}/>
-                </Grid>
-            ))}
-
+  return (
+    <Grid container spacing={2} sx={{ padding: "25px", marginTop: "65px" }}>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <CreateSCard funcshowCreatePopup={funcshowCreatePopup} />
+        <CreateSchoolPopup
+          showCreatePopup={showCreatePopup}
+          closeshowCreatePopup={closeshowCreatePopup}
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <SearchSchool toggleSearchPopup={toggleSearchPopup} type={"nocode"}>
+          Join School
+        </SearchSchool>
+        <SearchSchoolPopup
+          showSearchPopup={showSearchPopup}
+          toggleSearchPopup={toggleSearchPopup}
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <SearchSchool toggleSearchPopup={toggleJoinPopup} type={"code"}>Join By Code</SearchSchool>
+        <JoinSchoolClassPopup
+          showJoinPopup={showJoinPopup}
+          toggleJoinPopup={toggleJoinPopup}
+        />
+      </Grid>
+      {userData.data.schools.map((school) => (
+        <Grid key={school.id} item xs={12} sm={6} md={4} lg={3}>
+          <SchoolItem school={school} id={userData.data.id} />
         </Grid>
-    )
+      ))}
+
+      {userData.data.classes
+        .filter((clase) => clase.school_id === null)
+        .map((clase) => (
+          <Grid key={clase.id} item xs={12} sm={6} md={4} lg={3}>
+            <ClassItem mycalss={clase} id={userData.data.id} />
+          </Grid>
+        ))}
+    </Grid>
+  );
 }
 
-export default SchoolCards
+export default SchoolCards;

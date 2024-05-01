@@ -3,7 +3,7 @@ import CreatePost from "./CreatePost"
 import PostList from "./PostList"
 function Posts() {
     return (
-        <Box sx={{ mb:'15px',width:{ lg: '552px'}}}>
+        <Box sx={{ mb:'15px',width:{ lg: '552px'},marginTop:'65px'}}>
               <CreatePost/>
               <PostList/>
         </Box>

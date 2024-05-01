@@ -18,7 +18,7 @@ function CreateSCard({funcshowCreatePopup}) {
             }}
             onClick={funcshowCreatePopup}
             >+</Button>
-            <Typography>CREATE SCHOOL</Typography>
+            <Typography>Create School/Class</Typography>
             
             
             </DemoPaper>

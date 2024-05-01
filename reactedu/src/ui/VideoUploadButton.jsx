@@ -30,7 +30,7 @@ function VideoUploadButton({ onChange,children ,setvideofile,setressource}) {
                 ref={videoInputRef}
             />
             <label htmlFor="contained-button-file">
-            <button style ={{color:'#666666',width:'fit-content'}}  className='buttonfile' onClick={handleButtonClick}>
+            <button style={{color:'#666666',width:'fit-content',display:'flex',gap:'5px',alignItems:'center'}} className='buttonfile'  onClick={handleButtonClick}>
                     {children}
                 </button>
             </label>

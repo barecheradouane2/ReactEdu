@@ -1,8 +1,16 @@
-import ImageIcon from "@mui/icons-material/Image";
+// import ImageIcon from "@mui/icons-material/Image";
+import Imageicon from "../assets/icons/Imageicon";
+
+import Calendericon from "../assets/icons/Calendericon";
+import Sendicon from "../assets/icons/Sendicon";
+import Pollicon from "../assets/icons/Pollicon";
+
+import Videoicon from "../assets/icons/Videoicon";
+
 import VideoCameraBackIcon from "@mui/icons-material/VideoCameraBack";
 import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 import PollIcon from "@mui/icons-material/Poll";
-import SendIcon from "@mui/icons-material/Send";
+// import SendIcon from "@mui/icons-material/Send";
 import ImageUploadButton from "./ImageUploadButton";
 import VideoUploadButton from "./VideoUploadButton";
 import FileUploadButton from "./FileUploadButton";
@@ -54,7 +62,7 @@ function CreatePost() {
             borderTopRightRadius: "15px",
           }}
         >
-          <Box sx={{ display: "flex" }}>
+          <Box sx={{ display: "flex" ,alignItems:''}}>
             <Avatar
               sx={{ bgcolor: deepOrange[500] }}
               alt="Remy Sharp"
@@ -62,13 +70,14 @@ function CreatePost() {
             >
               B
             </Avatar>
-            <input
+            {/* <input
               type="text"
               name=""
               id=""
               placeholder="write something...🖊"
               style={{ border: "none", outline: "none", background: "none" }}
-            />
+            /> */}
+            <textarea placeholder="write something...🖊" style={{ border: "none", outline: "none", background: "none",width:'100%',resize:'none',paddingLeft:'10px',fontSize:'16px',fontFamily:'inherit',marginTop:'10px',overflow:"hidden"}}></textarea>
           </Box>
           <Box
             className="ressource"
@@ -76,9 +85,9 @@ function CreatePost() {
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", // Responsive grid with minimum width of 200px
               gridGap: "10px", // Spacing between grid items
-              border: "1px solid #ccc",
+              // border: "1px solid #ccc",
+              // padding: "10px",
               borderRadius: "5px",
-              padding: "10px",
             }}
           >
             {slicedRessource.map((res, index) => {
@@ -177,28 +186,36 @@ function CreatePost() {
               <div style={{}}>
                 {/* Render the uploaded attachments */}
                 {attachment.map((attachment, index) => (
-                  <div key={index} style={{display:'flex',alignItems:'center',gap:'5px',position:'relative'}}>
-                    <img  width ='50px' height ='50px'src="../../public/file-blank-solid-240.png"/>
+                  <div
+                    key={index}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      position: "relative",
+                    }}
+                  >
+                    <img
+                      width="50px"
+                      height="50px"
+                      src="../../public/file-blank-solid-240.png"
+                    />
                     <span>{attachment.name}</span>
 
                     <Iconbutton
-                    onClick={() => {
-
-                      setattachment((prevAttachments) =>
-                        prevAttachments.filter((_, i) => i !== index)
-                      );
-                      
-                    }}
-                    style={{
-                      position: "absolute",
-                      top: "0",
-                      right: "0",
-                      
-                    }}
-                  >
-                    <CancelIcon />
-                  </Iconbutton>
-                    
+                      onClick={() => {
+                        setattachment((prevAttachments) =>
+                          prevAttachments.filter((_, i) => i !== index)
+                        );
+                      }}
+                      style={{
+                        position: "absolute",
+                        top: "0",
+                        right: "0",
+                      }}
+                    >
+                      <CancelIcon />
+                    </Iconbutton>
                   </div>
                 ))}
               </div>
@@ -211,37 +228,50 @@ function CreatePost() {
             display: "flex",
             justifyContent: "start",
             backgroundColor: "#D2F0FF",
-            px: "15px",
+            pl: "15px",
           }}
         >
           <ImageUploadButton
             setressource={setressource}
             setimgfile={setimgfile}
+            sx={{ display: "flex", alignItems: "center" }}
           >
-            <ImageIcon sx={{ color: "#666666" }} />
+            {/* <ImageIcon sx={{ color: "#666666" }} /> */}
+            <Imageicon />
             Photos
           </ImageUploadButton>
           <VideoUploadButton
             setvideofile={setvideofile}
             setressource={setressource}
           >
-            <VideoCameraBackIcon />
+            <Videoicon />
             Video
           </VideoUploadButton>
           <ImageUploadButton>
-            <EditCalendarIcon />
+            {/* <EditCalendarIcon /> */}
+            <Calendericon />
             Events
           </ImageUploadButton>
           <FileUploadButton setattachment={setattachment}>
-            <PollIcon />
+            {/* <PollIcon /> */}
+            <Pollicon />
             Polla
           </FileUploadButton>
           {/* <button  style={{color:'#666666',backgroundColor:'#A1E1FF',flexGrow:'1'}}  > </button> */}
           <button
-            style={{ color: "#666666", flexGrow: 1 }}
+            style={{
+              color: "#666666",
+              flexGrow: 1,
+              backgroundColor: "#A1E1FF",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginLeft:'10px'
+            }}
             className="buttonfile"
           >
-            <SendIcon />
+            {/* <SendIcon /> */}
+            <Sendicon />
           </button>
         </Box>
       </Box>

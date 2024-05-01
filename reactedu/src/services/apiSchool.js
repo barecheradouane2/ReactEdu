@@ -32,10 +32,26 @@ export async function DeleteSchool(id) {
 
 export async function UpdateSchool(payload) {
   try {
-    const response = await axiosClient.put(`/schools/${payload.id}`,payload);
+    const response = await axiosClient.put(`/schools/${payload.id}`, payload,{
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error for updating school :", error);
     throw error; // Rethrow the error to be handled by the caller
   }
 }
+
+export async function JoinSchool (payload) {
+  try {
+    const response = await axiosClient.post("/school-join-requests",payload);
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.error("Error for joining school :", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+

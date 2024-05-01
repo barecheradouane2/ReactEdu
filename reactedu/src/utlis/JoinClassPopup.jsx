@@ -15,36 +15,38 @@ import { useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { JoinSchoolWithCode } from "../services/apiSchoolRequest";
+import { JoinClassbyCode } from "../services/apiClass";
 import { toast } from "react-hot-toast";
 
-function JoinSchoolPopup({ showJoinPopup, toggleJoinPopup }) {
+function JoinClassPopup({ showJoinPopup, toggleJoinPopup }) {
   const Code = useRef(null);
 
   const queryClient = useQueryClient();
-  //it work porperly
 
-  const { mutate, isLoading } = useMutation({
-    mutationFn: JoinSchoolWithCode,
+  const { mutate: joinwithcode, isLoading } = useMutation({
+    mutationFn: JoinClassbyCode,
     onSuccess: () => {
-          
-      
-      toast.success("joined School successfully");
+      toast.success("joined Class successfully");
+
+    
+
+      queryClient.invalidateQueries("Class");
       queryClient.invalidateQueries("schools");
     },
     onError: (error) => {
-     
+    
+        console.log("************************", error.response.data.message);
         toast.error(error.response.data.message);
-        console.log("Error of join Class:", error);
       
     },
   });
 
   const onjoin = () => {
+    console.log(Code.current.value);
     const payload = {
       code: Code.current.value,
     };
-    mutate(payload);
+    joinwithcode(payload);
   };
 
   return (
@@ -52,12 +54,13 @@ function JoinSchoolPopup({ showJoinPopup, toggleJoinPopup }) {
       <div className="flex justify-center">
         {" "}
         <img
-          src="../../public/createschool.jpg"
+          src="../../public/ClassDefault.jpg"
           alt="school"
           style={{ width: "200px", height: "200px" }}
         ></img>
       </div>
-      <div className="flex justify-content gap-2">
+
+      <div className="flex justify-content gap-2 mt-5">
         <TextField inputRef={Code} variant="outlined" label="Code"></TextField>
 
         {/* <InputFileUpload inputRef={schoolimg}/> */}
@@ -70,4 +73,4 @@ function JoinSchoolPopup({ showJoinPopup, toggleJoinPopup }) {
   );
 }
 
-export default JoinSchoolPopup;
+export default JoinClassPopup;

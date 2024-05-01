@@ -1,23 +1,8 @@
 
-import axiosClient from "./axiosClient";
+import axiosClient from "../axios-client.js";
 
 export async function login(payload) {
 
-
-
-    // axiosClient
-    // .post("/login", payload)
-    // .then(({ data }) => {
-    //   setUser(data.data);
-    //   console.log (data);
-    //   setToken(data.token);
-    // })
-    // .catch((err) => {
-    //   const response = err.response;
-    //   if (response && response.status === 422) {
-    //     setMessage(response.data.message);
-    //   }
-    // });
   try {
     const response = await axiosClient.post("/login", payload);
     return response.data;

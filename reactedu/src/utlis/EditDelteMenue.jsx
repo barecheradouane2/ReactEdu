@@ -10,7 +10,7 @@ import { toast } from "react-hot-toast";
 
 const ITEM_HEIGHT = 48;
 
-function EditDelteMenue({ school, setschools,deleteSchool }) {
+function EditDelteMenue({ school, deleteSchool }) {
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const { user, setUser } = useStateContext();
 
@@ -42,10 +42,11 @@ function EditDelteMenue({ school, setschools,deleteSchool }) {
     deleteSchool(school.id, {
       onSuccess: () => {
         handleClose();
-        setschools((prevSchools) =>
-          prevSchools.filter((item) => item.id !== school.id)
-        );
-        toast.success("School Deleted Successfully");
+        // setschools((prevSchools) =>
+        //   prevSchools.filter((item) => item.id !== school.id)
+        // );
+       
+
       },
       onError: () => {
         toast.error("Failed to delete school");

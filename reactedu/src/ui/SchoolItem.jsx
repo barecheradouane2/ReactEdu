@@ -10,32 +10,23 @@ import { useQueryClient } from "@tanstack/react-query";
 import { DeleteSchool } from "../services/apiSchool";
 import { UpdateSchool } from "../services/apiSchool";
 import { toast } from "react-hot-toast";
+import Loading from "../utlis/Loading";
 
-function SchoolItem({ school, setschools }) {
+function SchoolItem({ school,id }) {
   const queryClient = useQueryClient();
 
-  const { mutate:deleteSchool } = useMutation({
+  const { isLoading,mutate:deleteSchool } = useMutation({
     mutationFn: DeleteSchool,
     onSuccess: () => {
       queryClient.invalidateQueries("schools");
+      queryClient.invalidateQueries("userData");
+      toast.success("School Deleted Successfully");
     },
   });
-
-
   
 
-  // const { mutate, isLoading } = useMutation({
-  //     mutationFn: DeleteSchool,
-  //     onSuccess: () => {
 
-  //         setschools(prevSchools => prevSchools.filter(item => item.id !== school.id));
-  //         toast.success("School Deleted Successfully");
-  //         queryClient.invalidateQueries("schools");
-  //     },
-  //     onError: () => {
-  //         console.log("Failed to delete school");
-  //     }
-  // });
+  // if(isLoading) return <Loading />;
 
   return (
     <DemoPaper
@@ -48,7 +39,7 @@ function SchoolItem({ school, setschools }) {
         position: "relative",
       }}
     >
-      <EditDelteMenue  deleteSchool={deleteSchool} school={school} setschools={setschools} />
+    {  school.admin_id == id && <EditDelteMenue  deleteSchool={deleteSchool} school={school}  />} 
 
       <Link
         to={`/schools/${encodeURIComponent(school.name)}`}

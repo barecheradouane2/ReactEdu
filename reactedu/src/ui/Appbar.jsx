@@ -1,9 +1,16 @@
-import { AppBar, Toolbar, IconButton, Typography, Button } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Button,
+  Grow,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box } from "@mui/system";
 import Badge from "@mui/material/Badge";
 import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+// import NotificationsIcon from "@mui/icons-material/Notifications";
 import * as React from "react";
 
 import { Avatar } from "@mui/material";
@@ -19,6 +26,11 @@ import Divider from "@mui/material/Divider";
 import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
+import { IoIosChatbubbles } from "react-icons/io";
+
+import Chaticon from "../assets/icons/Chaticon";
+import Notificationicon from "../assets/icons/Notificationicon";
+
 import Logout from "@mui/icons-material/Logout";
 import { useStateContext } from "../context/ContextProvider";
 function Appbar({ drawerWidth, funshowdrawer }) {
@@ -60,17 +72,23 @@ function Appbar({ drawerWidth, funshowdrawer }) {
   return (
     <>
       <AppBar
-        position="static"
+        position="fixed"
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           marginLeft: { xs: 0, sm: `${drawerWidth}px` },
+          // marginBottom: "50px",
 
           backgroundColor: "white",
           display: "flex",
           justifyContent: "space-between",
         }}
       >
-        <Toolbar>
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: { xs: "space-between", sm: "space-between" },
+          }}
+        >
           {/* <Typography variant="h6" component="div" >
             News
           </Typography> */}
@@ -84,7 +102,13 @@ function Appbar({ drawerWidth, funshowdrawer }) {
             <MenuIcon />
           </IconButton>
 
-          <ButtonGroup
+          <Box>
+
+            {drawerWidth === 0 &&  <img src="../../public/logo.png" />}
+           
+          </Box>
+
+          {/* <ButtonGroup
             variant="outlined"
             aria-label="Basic button group"
             sx={{ flexGrow: 1, display: { xs: "none", sm: "flex" } }}
@@ -92,7 +116,7 @@ function Appbar({ drawerWidth, funshowdrawer }) {
             <Button>Explore</Button>
             <Button>Class Feed</Button>
             <Button>School Feed</Button>
-          </ButtonGroup>
+          </ButtonGroup> */}
 
           <Box sx={{ display: { xs: "flex" } }}>
             <IconButton
@@ -101,7 +125,20 @@ function Appbar({ drawerWidth, funshowdrawer }) {
               color="black"
             >
               <Badge badgeContent={4} color="error">
-                <MailIcon />
+                <div
+                  style={{
+                    backgroundColor: "#E9E9E9",
+                    // width: "50px",
+                    // height: "50px",
+                    padding: "12px 12px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Chaticon />
+                </div>
               </Badge>
             </IconButton>
             <IconButton
@@ -112,17 +149,32 @@ function Appbar({ drawerWidth, funshowdrawer }) {
                 setnotifi(!notif);
               }}
             >
-              <Badge badgeContent={notification.length} color="error">
-                <NotificationsIcon sx={{}} />
+              <Badge
+                badgeContent={notification.length}
+                color="error"
+                sx={{ display: "flex", alignItems: "center" }}
+              >
+                <div
+                  style={{
+                    backgroundColor: "#E9E9E9",
+                    // width: "50px",
+                    // height: "50px",
+                    padding: "12px 12px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Notificationicon sx={{}} />
+                </div>
               </Badge>
             </IconButton>
 
             <Typography
               variant="h8"
               sx={{ mt: "10px", ml: "12px", mr: "8px", color: "black" }}
-            >
-               
-            </Typography>
+            ></Typography>
             {/* <Avatar
             sx={{ bgcolor: deepOrange[500] }}
               alt="Remy Sharp"
@@ -144,9 +196,7 @@ function Appbar({ drawerWidth, funshowdrawer }) {
                   sx={{ bgcolor: deepOrange[500] }}
                   alt="Remy Sharp"
                   src="/broken-image.jpg"
-                >
-                
-                </Avatar>
+                ></Avatar>
               </IconButton>
             </Tooltip>
 

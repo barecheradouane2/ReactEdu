@@ -4,7 +4,11 @@ import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
-function SearchSchool({toggleSearchPopup,children}) {
+import { FaSchoolLock } from "react-icons/fa6";
+import { CiBarcode } from "react-icons/ci";
+
+
+function SearchSchool({toggleSearchPopup,children,type}) {
     return (
         <DemoPaper variant="elevation"  sx={
             {padding:'10px',height:'200px',display:'flex'
@@ -17,11 +21,13 @@ function SearchSchool({toggleSearchPopup,children}) {
                 height:'70px',
                 borderRadius:'50%',
                 fontSize:'30px',
-                backgroundColor:'#f50057',
-                ":hover":{  backgroundColor:'#ff5983'}
+                backgroundColor: `${type === 'nocode' ? '#cd512d' : '#616d58'}`,
+                 ":hover":{   backgroundColor: `${type === 'nocode' ? '#cd512d' : '#616d58'}`}
             }}
             onClick={toggleSearchPopup}
-            ><SearchOutlinedIcon/></Button>
+            >
+             {type=='code' ? <CiBarcode/> : <FaSchoolLock /> }   
+            </Button>
             <Typography>{children}</Typography>
             
             

@@ -73,7 +73,7 @@ function Contacts() {
     ];
     
     return (
-        <Box   style={{height:'fit-content',width:'250px',borderRadius:'15px'}} className='contact'>
+        <Box   style={{height:'fit-content',width:'250px',borderRadius:'15px',marginTop:'65px'}} className='contact'>
 
          {/* <Event>
         <span  className='spantitle'>Birthday</span>

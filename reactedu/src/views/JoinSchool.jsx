@@ -28,7 +28,7 @@ function JoinSchool() {
 
     return (
         <>
-            <Appbar drawerWidth={drawerWidth} funshowdrawer={funShowDrawer}/>
+            <Appbar  drawerWidth={drawerWidth} funshowdrawer={funShowDrawer}/>
            
             {shouldHideDrawer ? <DrawerClass drawerWidth={drawerWidth} showdrawer={showdrawer} drawertype={drawertype} funclosedrawer={funcCloseDrawer}/>
            : <Drawers drawerWidth={drawerWidth} showdrawer={showdrawer} drawertype={drawertype} funclosedrawer={funcCloseDrawer}/>}

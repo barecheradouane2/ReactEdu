@@ -45,13 +45,9 @@ function FileUploadButton({ onChange, children, setattachment }) {
         {/* <Button sx={{color:'#666666',width:'fit-content'}} component="span">
                     {children}
                 </Button> */}
-        <button
-          style={{ color: "#666666" }}
-          onClick={handleButtonClick}
-          className="buttonfile"
-        >
-          {children}
-        </button>
+         <button style={{color:'#666666',width:'fit-content',display:'flex',gap:'5px',alignItems:'center'}} className='buttonfile'  onClick={handleButtonClick}>
+                    {children}
+                </button>
       </label>
     </div>
   );
