@@ -1,21 +1,24 @@
 
 
 import { useRef } from 'react';
-function VideoUploadButton({ onChange,children ,setvideofile,setressource}) {
+function VideoUploadButton({ children ,setvideofile,setressource,ressource,setposttype}) {
 
     const videoInputRef = useRef(null);
     const handleButtonClick = () => {
         if (videoInputRef.current) {
             videoInputRef.current.click();
         }
+        setposttype('vid');
     };
     const handleFileChange = (event) => {
         const files = event.target.files;
         const urls = Array.from(files).map(file => URL.createObjectURL(file));
+        let ressoursefilter=ressource.filter((item)=>item.type=='vid');
+
       
-        setressource(prevImages => [...prevImages, ...urls.map(url => ({ type: 'vid', url: url }))]); // Adjusted to correctly add each URL as an object with type 'vid'
-        setvideofile([...files]);
-        onChange(files);
+        setressource(prevImages => [...ressoursefilter, ...urls.map(url => ({ type: 'vid', url: url }))]); // Adjusted to correctly add each URL as an object with type 'vid'
+        setvideofile((prev)=>[...prev,...files]);
+      
     };
     
 

@@ -1,17 +1,17 @@
 // import { Button } from '@mui/material';
 import { useRef } from "react";
 
-function FileUploadButton({ onChange, children, setattachment }) {
+function FileUploadButton({ children, setattachment, setposttype,ressource, setressource}) {
   const fileInputRef = useRef(null);
   const handleButtonClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
+      setposttype('file');
     }
   };
   const handleFileChange = (event) => {
     const files = event.target.files;
 
-    // Create an array to store the file objects
     const newAttachments = [];
 
     // Loop through each selected file
@@ -21,15 +21,20 @@ function FileUploadButton({ onChange, children, setattachment }) {
       // Add the file object to the array
       newAttachments.push(file);
     }
+   
+ 
+     let ressoursefilter=ressource.filter((item)=>item.type=='file');
 
-    // Update the state by concatenating the new array of attachments with the existing array
+    setressource(prevImages => [...ressoursefilter, { type: 'file', url: files[0].name }]); // Adjusted to correctly add each URL as an object
+    
+    console.log(ressource);
+
     setattachment((prevAttachments) => [
       ...prevAttachments,
       ...newAttachments,
     ]);
 
-    // Call the onChange prop with the selected files
-    onChange(files);
+    
   };
 
   return (

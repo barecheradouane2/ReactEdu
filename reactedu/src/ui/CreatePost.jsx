@@ -7,29 +7,44 @@ import Pollicon from "../assets/icons/Pollicon";
 
 import Videoicon from "../assets/icons/Videoicon";
 
-import VideoCameraBackIcon from "@mui/icons-material/VideoCameraBack";
-import EditCalendarIcon from "@mui/icons-material/EditCalendar";
-import PollIcon from "@mui/icons-material/Poll";
+// import EditCalendarIcon from "@mui/icons-material/EditCalendar";
 // import SendIcon from "@mui/icons-material/Send";
 import ImageUploadButton from "./ImageUploadButton";
 import VideoUploadButton from "./VideoUploadButton";
 import FileUploadButton from "./FileUploadButton";
 import Avatar from "@mui/material/Avatar";
 import { deepOrange } from "@mui/material/colors";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import Iconbutton from "@mui/material/IconButton";
-import Event from "./Event";
-import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
+// import Event from "./Event";
+// import HighlightOffOutlinedIcon from "@mui/icons-material/HighlightOffOutlined";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CreatePostAdmin } from "../services/apiPosts";
+import { toast } from "react-hot-toast";
+import { useRef } from "react";
+import { useLocation } from "react-router-dom";
 
 function CreatePost() {
+  
   const [imgfile, setimgfile] = useState([]);
   const [videofile, setvideofile] = useState([]);
-  const [ressource, setressource] = useState([]);
-  //   const [imagepre, setimagepre] = useState([]);
-  //   const [videopre, setvideopre] = useState("");
   const [attachment, setattachment] = useState([]);
+  const [poll, setpoll] = useState([]);
+
+ 
+
+  //the problem with ressource
+  const [ressource, setressource] = useState([]);
+  const [posttype, setposttype] = useState("text");
+
+  const location = useLocation();
+
+  const { school_id } = location.state;
+
+  const text = useRef(null);
+  const files = useRef(null);
 
   function handleimg() {
     const updatedImgfile = imgfile.filter((img) =>
@@ -48,6 +63,47 @@ function CreatePost() {
     setvideofile(updatedVideofile);
   }
 
+  const queryClient = useQueryClient();
+  const { mutate: createpostadmin, isLoading } = useMutation({
+    mutationFn: CreatePostAdmin,
+    onSuccess: (data) => {
+      toast.success("post created successfully");
+      //setschools(prevSchools => [...prevSchools, data]);
+
+      queryClient.invalidateQueries("posts");
+      queryClient.invalidateQueries("userData");
+    },
+    onError: () => {
+      toast.error("Error  of creating post");
+    },
+  });
+
+  function handlesubmit() {
+    const formData = new FormData();
+    // ressource.forEach((res) => {
+    //   if (res.type === "img") {
+    //     formData.append("picture[]", "picture");
+    //   } else if (res.type === "vid") {
+    //     formData.append("video[]", "video");
+    //   }else{
+
+    //   }
+    // });
+    // attachment.forEach((file) => {
+    //   formData.append("attachment[]", file);
+    // });
+
+    formData.append("type", "text");
+    // formData.append("type", "video");
+    // formData.append("type", "picture");
+    // formData.append("type", "poll");
+    // formData.append("type", "attachment");
+
+    formData.append("text", text.current.value);
+    formData.append("school_id", school_id);
+    createpostadmin(formData);
+  }
+
   const slicedRessource =
     ressource.length > 4 ? ressource.slice(0, 3) : ressource;
   return (
@@ -62,7 +118,7 @@ function CreatePost() {
             borderTopRightRadius: "15px",
           }}
         >
-          <Box sx={{ display: "flex" ,alignItems:''}}>
+          <Box sx={{ display: "flex", alignItems: "" }}>
             <Avatar
               sx={{ bgcolor: deepOrange[500] }}
               alt="Remy Sharp"
@@ -77,7 +133,22 @@ function CreatePost() {
               placeholder="write something...🖊"
               style={{ border: "none", outline: "none", background: "none" }}
             /> */}
-            <textarea placeholder="write something...🖊" style={{ border: "none", outline: "none", background: "none",width:'100%',resize:'none',paddingLeft:'10px',fontSize:'16px',fontFamily:'inherit',marginTop:'10px',overflow:"hidden"}}></textarea>
+            <textarea
+              ref={text}
+              placeholder="write something...🖊"
+              style={{
+                border: "none",
+                outline: "none",
+                background: "none",
+                width: "100%",
+                resize: "none",
+                paddingLeft: "10px",
+                fontSize: "16px",
+                fontFamily: "inherit",
+                marginTop: "10px",
+                overflow: "hidden",
+              }}
+            ></textarea>
           </Box>
           <Box
             className="ressource"
@@ -90,7 +161,7 @@ function CreatePost() {
               borderRadius: "5px",
             }}
           >
-            {slicedRessource.map((res, index) => {
+            {/* {slicedRessource.map((res, index) => {
               if (res.type === "img") {
                 return (
                   <div key={index} style={{ position: "relative" }}>
@@ -145,8 +216,40 @@ function CreatePost() {
                     </video>
                   </div>
                 );
-              } else {
-                return null;
+              } else if (res.type === "file") {
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      position: "relative",
+                    }}
+                  >
+                    <img
+                      width="50px"
+                      height="50px"
+                      src="../../public/file-blank-solid-240.png"
+                    />
+                    <span>{res.url}</span>
+
+                    <Iconbutton
+                      onClick={() => {
+                        setattachment((prevAttachments) =>
+                          prevAttachments.filter((_, i) => i !== index)
+                        );
+                      }}
+                      style={{
+                        position: "absolute",
+                        top: "0",
+                        right: "0",
+                      }}
+                    >
+                      <CancelIcon />
+                    </Iconbutton>
+                  </div>
+                );
               }
             })}
             {ressource.length > 4 && (
@@ -180,46 +283,9 @@ function CreatePost() {
                   </h1>
                 </div>
               </div>
-            )}
+            )} */}
 
-            {attachment.length > 0 && (
-              <div style={{}}>
-                {/* Render the uploaded attachments */}
-                {attachment.map((attachment, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "5px",
-                      position: "relative",
-                    }}
-                  >
-                    <img
-                      width="50px"
-                      height="50px"
-                      src="../../public/file-blank-solid-240.png"
-                    />
-                    <span>{attachment.name}</span>
-
-                    <Iconbutton
-                      onClick={() => {
-                        setattachment((prevAttachments) =>
-                          prevAttachments.filter((_, i) => i !== index)
-                        );
-                      }}
-                      style={{
-                        position: "absolute",
-                        top: "0",
-                        right: "0",
-                      }}
-                    >
-                      <CancelIcon />
-                    </Iconbutton>
-                  </div>
-                ))}
-              </div>
-            )}
+           
           </Box>
         </Box>
 
@@ -234,6 +300,8 @@ function CreatePost() {
           <ImageUploadButton
             setressource={setressource}
             setimgfile={setimgfile}
+            setposttype={setposttype}
+            ressource={ressource}
             sx={{ display: "flex", alignItems: "center" }}
           >
             {/* <ImageIcon sx={{ color: "#666666" }} /> */}
@@ -243,6 +311,8 @@ function CreatePost() {
           <VideoUploadButton
             setvideofile={setvideofile}
             setressource={setressource}
+            setposttype={setposttype}
+            ressource={ressource}
           >
             <Videoicon />
             Video
@@ -250,9 +320,14 @@ function CreatePost() {
           <ImageUploadButton>
             {/* <EditCalendarIcon /> */}
             <Calendericon />
-            Events
+            Attachement
           </ImageUploadButton>
-          <FileUploadButton setattachment={setattachment}>
+          <FileUploadButton
+            setattachment={setattachment}
+            ressource={ressource}
+            setressource={setressource}
+            setposttype={setposttype}
+          >
             {/* <PollIcon /> */}
             <Pollicon />
             Polla
@@ -266,8 +341,9 @@ function CreatePost() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              marginLeft:'10px'
+              marginLeft: "10px",
             }}
+            onClick={() => handlesubmit()}
             className="buttonfile"
           >
             {/* <SendIcon /> */}
@@ -281,99 +357,4 @@ function CreatePost() {
 
 export default CreatePost;
 
-{
-  /* <ButtonGroup  aria-label="Basic button group">
-<Button ><ImageIcon/>Photos</Button>
-<Button><VideoCameraBackIcon/>Video</Button>
-<Button><EditCalendarIcon/>Calander</Button>
-<Button><PollIcon/>Polla</Button>
-<Button><SendIcon/>Share</Button>
 
-</ButtonGroup> */
-
-  {
-    /* <Box className="ressource" sx={{}}>
-{imagepre !== '' ? (
-  <div style={{ position: "relative" }}>
-    <Iconbutton
-      onClick={() => setimagepre("")}
-      style={{
-        position: "absolute",
-        top: "0",
-        right: "0",
-        zIndex: "100",
-      }}
-    >
-      <CancelIcon />
-    </Iconbutton>
-    <img
-      src={imagepre}
-      alt=""
-      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-    />
-  </div>
-) : videopre !== '' ? (
-    <div style={{ position: "relative" }}>
-         <Iconbutton
-      onClick={() => setvideopre("")}
-      style={{
-        position: "absolute",
-        top: "0",
-        right: "0",
-        zIndex: "100",
-      }}
-    >
-      <CancelIcon />
-    </Iconbutton>
-      <video controls width="100%" height="auto">
-       <source src={videopre} type="video/mp4"></source>
-     </video>
-    </div>
-  
-) : null}
-</Box> */
-  }
-
-  // {imagepre.length > 0 && (
-  //     imagepre.map((image, index) => (
-  //       <div key={index} style={{ position: "relative" }}>
-  //         <Iconbutton
-
-  //           style={{
-  //             position: "absolute",
-  //             top: "0",
-  //             right: "0",
-  //             zIndex: "100",
-  //           }}
-  //         >
-  //           <CancelIcon />
-  //         </Iconbutton>
-  //         <img
-  //           src={image}
-  //           alt=""
-  //           style={{ width: "100%", height: "100%", objectFit: "cover" }}
-  //         />
-  //       </div>
-  //     ))
-  //   ) }
-
-  //   { videopre !== '' && (
-  //       <div style={{ position: "relative" }}>
-  //            <Iconbutton
-  //         onClick={() => setvideopre("")}
-  //         style={{
-  //           position: "absolute",
-  //           top: "0",
-  //           right: "0",
-  //           zIndex: "100",
-  //         }}
-  //       >
-  //         <CancelIcon />
-  //       </Iconbutton>
-  //         <video controls width="100%" height="auto">
-  //          <source src={videopre} type="video/mp4"></source>
-  //        </video>
-  //       </div>
-
-  //   ) }
-}

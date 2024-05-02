@@ -24,6 +24,9 @@ function SchoolItem({ school,id }) {
     },
   });
   
+  let theid =school.id;
+ 
+  
 
 
   // if(isLoading) return <Loading />;
@@ -41,10 +44,10 @@ function SchoolItem({ school,id }) {
     >
     {  school.admin_id == id && <EditDelteMenue  deleteSchool={deleteSchool} school={school}  />} 
 
-      <Link
-        to={`/schools/${encodeURIComponent(school.name)}`}
-        style={{ textDecoration: "none" }}
-      >
+    {/* <Link to={{ pathname: , state: {} }}> */}
+
+      <Link to={`/schools/${encodeURIComponent(school.name)}`}  state={{ school_id: theid}}>
+    
         <Box
           sx={{
             display: "flex",
