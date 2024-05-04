@@ -12,39 +12,24 @@ function FileUploadButton({ children, setattachment, setposttype,ressource, setr
   const handleFileChange = (event) => {
     const files = event.target.files;
 
-    const newAttachments = [];
 
-    // Loop through each selected file
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-
-      // Add the file object to the array
-      newAttachments.push(file);
-    }
-   
- 
      let ressoursefilter=ressource.filter((item)=>item.type=='file');
 
-    setressource(prevImages => [...ressoursefilter, { type: 'file', url: files[0].name }]); // Adjusted to correctly add each URL as an object
+     setressource([...ressoursefilter, { type: 'file', url: files[0].name }]); // Adjusted to correctly add each URL as an object
     
     console.log(ressource);
 
-    setattachment((prevAttachments) => [
-      ...prevAttachments,
-      ...newAttachments,
-    ]);
-
-    
   };
 
   return (
-    <div>
+    <div style={{marginRight:'25px'}}>
       <input
         style={{ display: "none" }}
         id="contained-button-file"
         type="file"
         onChange={handleFileChange}
         ref={fileInputRef}
+        
       />
       <label htmlFor="contained-button-file">
         {/* <Button sx={{color:'#666666',width:'fit-content'}} component="span">

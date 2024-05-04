@@ -8,21 +8,25 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import SendIcon from "@mui/icons-material/Send";
 import CommentList from "./CommentList";
 import Reply from "./Reply";
-import React, { useState } from 'react';
-import Modal from 'react-modal';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import CloseIcon from '@mui/icons-material/Close';
+import React, { useState } from "react";
+import Modal from "react-modal";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import CloseIcon from "@mui/icons-material/Close";
+
 function PostItem({ post }) {
-
   const MAX_IMAGES = 4;
-  const phots=post.photos;
-  const photos = post.photos.slice(0, MAX_IMAGES); // Take only the first four images
+  const phots = post.pictures || [];
+  let pictures = [];
+  let remainingImagesCount = 0;
 
-  const remainingImagesCount = post.photos.length - MAX_IMAGES;
+  if (post && Array.isArray(post.pictures)) {
+    pictures = post.pictures.slice(0, MAX_IMAGES);
+    remainingImagesCount = post.pictures.length - MAX_IMAGES;
+  }
+
   const remainingImagesText =
     remainingImagesCount > 0 ? `+${remainingImagesCount} more` : "";
-
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -47,20 +51,18 @@ function PostItem({ post }) {
       prevIndex === 0 ? phots.length - 1 : prevIndex - 1
     );
   };
+
   const gridStyle = {
     display: "grid",
     gridTemplateColumns:
-      post.photos.length === 1
+      post.pictures && post.pictures.length === 1
         ? "1fr"
         : "repeat(auto-fill, minmax(200px, 1fr))",
     gridGap: "10px",
-    // border: "1px solid #ccc",
     borderRadius: "5px",
-    // padding: "10px",
     cursor: "pointer",
   };
 
- 
   return (
     <Box
       sx={{
@@ -122,77 +124,141 @@ function PostItem({ post }) {
           {post.text}
         </span>
         <Box sx={gridStyle}>
-          {photos.map((photo, index) => (
-            <div key={photo.id} style={{ position: "relative" }}>
-              <img
-                src={photo.url}
-                alt="post"
-                style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                onClick={() => openModal(index)}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-                }}
-              />
-              {index === MAX_IMAGES - 1 && remainingImagesText && (
-                <div
-                  style={{
-                    position: "absolute",
-                    // bottom: "5px",
-                    // right: "5px",
-                    top:"50%",
-                    right:"50%",
-                    transform: "translate(50%, -50%)",
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    color: "#fff",
-                    // padding: "2px 5px",
-                    width: "100%",
-                    height: "100%",
-                    borderRadius: "3px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    fontSize: "1.5rem",
+          {post.pictures &&
+            pictures.map((photo, index) => (
+              <div key={photo.id} style={{ position: "relative" }}>
+                <img
+                  src={`http://127.0.0.1:8000/storage/${photo.url}`}
+                  alt="post"
+                  style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                  onClick={() => openModal(index)}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src =
+                      "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
                   }}
-                >
-                  {remainingImagesText}
-                </div>
-              )}
-            </div>
-          ))}
+                />
+                {index === MAX_IMAGES - 1 && remainingImagesText && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      right: "50%",
+                      transform: "translate(50%, -50%)",
+                      backgroundColor: "rgba(0, 0, 0, 0.5)",
+                      color: "#fff",
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: "3px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      fontSize: "1.5rem",
+                    }}
+                  >
+                    {remainingImagesText}
+                  </div>
+                )}
+              </div>
+            ))}
         </Box>
 
         <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        style={{
-          content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            padding: 0,
-            border: 'none',
-            background: '#fff',
-            maxWidth: '80%',
-            maxHeight: '80%',
-          },
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          },
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
-          <button style={{ padding: '8px 16px', borderRadius: '5px', border: 'none', background: '#333', color: '#fff', cursor: 'pointer' }} onClick={prevSlide}><ArrowBackIosIcon/></button>
-          <button style={{ padding: '8px 16px', borderRadius: '5px', border: 'none', background: '#333', color: '#fff', cursor: 'pointer' }} onClick={closeModal}><CloseIcon/></button>
-          <button style={{ padding: '8px 16px', borderRadius: '5px', border: 'none', background: '#333', color: '#fff', cursor: 'pointer' }} onClick={nextSlide}><NavigateNextIcon/></button>
-        </div>
-        <span style={{ position: 'absolute', top: '10px', right: '10px', cursor: 'pointer', fontSize: '24px', color: '#333' }} onClick={closeModal}>&times;</span>
-        <img src={phots[currentImageIndex].url} alt="post" style={{ objectFit: 'contain', width: '440px', height: 'auto', maxHeight: 'calc(100vh - 120px)' }} />
-      </Modal>
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          style={{
+            content: {
+              top: "50%",
+              left: "50%",
+              right: "auto",
+              bottom: "auto",
+              marginRight: "-50%",
+              transform: "translate(-50%, -50%)",
+              padding: 0,
+              border: "none",
+              background: "#fff",
+              maxWidth: "80%",
+              maxHeight: "80%",
+            },
+            overlay: {
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+            },
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "10px",
+            }}
+          >
+            <button
+              style={{
+                padding: "8px 16px",
+                borderRadius: "5px",
+                border: "none",
+                background: "#333",
+                color: "#fff",
+                cursor: "pointer",
+              }}
+              onClick={prevSlide}
+            >
+              <ArrowBackIosIcon />
+            </button>
+            <button
+              style={{
+                padding: "8px 16px",
+                borderRadius: "5px",
+                border: "none",
+                background: "#333",
+                color: "#fff",
+                cursor: "pointer",
+              }}
+              onClick={closeModal}
+            >
+              <CloseIcon />
+            </button>
+            <button
+              style={{
+                padding: "8px 16px",
+                borderRadius: "5px",
+                border: "none",
+                background: "#333",
+                color: "#fff",
+                cursor: "pointer",
+              }}
+              onClick={nextSlide}
+            >
+              <NavigateNextIcon />
+            </button>
+          </div>
+          <span
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              cursor: "pointer",
+              fontSize: "24px",
+              color: "#333",
+            }}
+            onClick={closeModal}
+          >
+            &times;
+          </span>
+          {phots[currentImageIndex] && (
+            <img
+              src={`http://127.0.0.1:8000/storage/app/public/posts/picture/${phots[currentImageIndex].url}`}
+              alt="post"
+              style={{
+                objectFit: "contain",
+                width: "440px",
+                height: "auto",
+                maxHeight: "calc(100vh - 120px)",
+              }}
+            />
+          )}
+        </Modal>
       </Box>
       <Box
         className="postfooter"
@@ -212,7 +278,7 @@ function PostItem({ post }) {
           <IconButton>
             <ChatBubbleOutlineIcon />
           </IconButton>
-          comments {post.comments_count}
+          {/* comments {post.comments_count} */}
         </Box>
 
         <Box>
@@ -237,7 +303,7 @@ function PostItem({ post }) {
           className="comments"
           sx={{ display: "flex", flexDirection: "column" }}
         >
-          {<CommentList comments={post.comments} />}
+          {/* {<CommentList comments={post.comments} />} */}
         </Box>
       </Box>
     </Box>

@@ -34,6 +34,8 @@ function SchoolCards() {
 
   const { isLoading, data: userData } = useQuery(["userData"], fetchUserData);
 
+  
+
   const { data: fetchedSchools } = useQuery(["schools"], getSchools);
   if (isLoading) return <Loading />;
 

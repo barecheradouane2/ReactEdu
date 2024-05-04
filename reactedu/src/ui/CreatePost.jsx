@@ -27,17 +27,22 @@ import { useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 function CreatePost() {
-  
   const [imgfile, setimgfile] = useState([]);
   const [videofile, setvideofile] = useState([]);
   const [attachment, setattachment] = useState([]);
   const [poll, setpoll] = useState([]);
-
- 
-
-  //the problem with ressource
-  const [ressource, setressource] = useState([]);
   const [posttype, setposttype] = useState("text");
+
+  //this array contains all the ressource image or video or attachements or polls (not yet)
+  const [ressource, setressource] = useState([]);
+  //this is the array that contains the ressource that will be show temporary to the page
+  let preressource = ressource.flatMap((item) => {
+    if (item.type == "file") return item;
+    return Array.from(item.url).map((file) => {
+      const url = URL.createObjectURL(file);
+      return { type: item.type, url: url };
+    });
+  });
 
   const location = useLocation();
 
@@ -80,32 +85,41 @@ function CreatePost() {
 
   function handlesubmit() {
     const formData = new FormData();
-    // ressource.forEach((res) => {
-    //   if (res.type === "img") {
-    //     formData.append("picture[]", "picture");
-    //   } else if (res.type === "vid") {
-    //     formData.append("video[]", "video");
-    //   }else{
 
-    //   }
-    // });
-    // attachment.forEach((file) => {
-    //   formData.append("attachment[]", file);
-    // });
+    switch (posttype) {
+      case "img":
+        formData.append("type", "picture");
 
-    formData.append("type", "text");
-    // formData.append("type", "video");
-    // formData.append("type", "picture");
-    // formData.append("type", "poll");
-    // formData.append("type", "attachment");
+        ressource.forEach((img, index) => {
+          formData.append(`picture[${index}]`, img.url[0]);
+        });
+        break;
+      case "vid":
+        formData.append("type", "video");
+        ressource.forEach((vi) => {
+          formData.append("video[]", vi.url[0]);
+        });
+        break;
+      case "file":
+        formData.append("type", "file");
+        ressource.forEach((at) => {
+          formData.append("attachment[]", attachment);
+        });
+        break;
+      default:
+        formData.append("type", "text");
+    }
 
     formData.append("text", text.current.value);
     formData.append("school_id", school_id);
+    console.log([...formData.entries()]);
+
     createpostadmin(formData);
   }
-
+  //this is the new array for fixing if there are number of age more then or equal four
   const slicedRessource =
-    ressource.length > 4 ? ressource.slice(0, 3) : ressource;
+    preressource.length > 4 ? preressource.slice(0, 3) : preressource;
+
   return (
     <Box sx={{}}>
       <Box sx={{}}>
@@ -161,8 +175,9 @@ function CreatePost() {
               borderRadius: "5px",
             }}
           >
-            {/* {slicedRessource.map((res, index) => {
+            {slicedRessource.map((res, index) => {
               if (res.type === "img") {
+                console.log("jmm", res);
                 return (
                   <div key={index} style={{ position: "relative" }}>
                     <Iconbutton
@@ -236,7 +251,7 @@ function CreatePost() {
 
                     <Iconbutton
                       onClick={() => {
-                        setattachment((prevAttachments) =>
+                        setressource((prevAttachments) =>
                           prevAttachments.filter((_, i) => i !== index)
                         );
                       }}
@@ -283,9 +298,7 @@ function CreatePost() {
                   </h1>
                 </div>
               </div>
-            )} */}
-
-           
+            )}
           </Box>
         </Box>
 
@@ -317,11 +330,17 @@ function CreatePost() {
             <Videoicon />
             Video
           </VideoUploadButton>
-          <ImageUploadButton>
-            {/* <EditCalendarIcon /> */}
+
+          <FileUploadButton
+            setattachment={setattachment}
+            ressource={ressource}
+            setressource={setressource}
+            setposttype={setposttype}
+          >
             <Calendericon />
             Attachement
-          </ImageUploadButton>
+          </FileUploadButton>
+
           <FileUploadButton
             setattachment={setattachment}
             ressource={ressource}
@@ -356,5 +375,3 @@ function CreatePost() {
 }
 
 export default CreatePost;
-
-
