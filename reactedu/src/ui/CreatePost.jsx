@@ -86,6 +86,8 @@ function CreatePost() {
   function handlesubmit() {
     const formData = new FormData();
 
+   
+
     switch (posttype) {
       case "img":
         formData.append("type", "picture");
@@ -96,19 +98,35 @@ function CreatePost() {
         break;
       case "vid":
         formData.append("type", "video");
-        ressource.forEach((vi) => {
-          formData.append("video[]", vi.url[0]);
+        ressource.forEach((vi, index) => {
+          formData.append(`video[${index}]`, vi.url[0]);
         });
         break;
       case "file":
-        formData.append("type", "file");
-        ressource.forEach((at) => {
-          formData.append("attachment[]", attachment);
-        });
+        formData.append("type", "attachment");
+        ressource.forEach((file, index) => {
+          console.log(file);
+          formData.append(`attachment[${index}]`, file.url);
+      });
         break;
+
+        case "poll":  
+        formData.append("type", "poll");
+
+        break;
+
       default:
         formData.append("type", "text");
+        break;
+
+      
+       
     }
+
+    // if (ressource.length === 0) {
+    //   formData.append("type", "text");
+
+    // }
 
     formData.append("text", text.current.value);
     formData.append("school_id", school_id);
@@ -121,12 +139,13 @@ function CreatePost() {
     preressource.length > 4 ? preressource.slice(0, 3) : preressource;
 
   return (
-    <Box sx={{}}>
+    <Box sx={{  mb: "25px",}}>
       <Box sx={{}}>
         <Box
           sx={{
             py: "15px",
             px: "15px",
+          
             backgroundColor: "white",
             borderTopLeftRadius: "15px",
             borderTopRightRadius: "15px",
@@ -203,6 +222,8 @@ function CreatePost() {
                         width: "100%",
                         height: "200px",
                         objectFit: "cover",
+                        position: "relative",
+                        zIndex: "3",
                       }}
                     />
                   </div>
@@ -247,7 +268,7 @@ function CreatePost() {
                       height="50px"
                       src="../../public/file-blank-solid-240.png"
                     />
-                    <span>{res.url}</span>
+                    <span>{res.url.name}</span>
 
                     <Iconbutton
                       onClick={() => {
@@ -271,11 +292,21 @@ function CreatePost() {
               <div style={{ position: "relative" }}>
                 <div
                   style={{
-                    height: "200px",
-                    backgroundColor: "#DDD",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    position: "absolute",
+                    zIndex: "2",
+                      top: "50%",
+                      right: "50%",
+                      transform: "translate(50%, -50%)",
+                      backgroundColor: "rgba(0, 0, 0, 0.5)",
+                      color: "#fff",
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: "3px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      fontSize: "1.5rem",
+                    
                   }}
                 >
                   <Iconbutton

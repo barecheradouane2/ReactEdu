@@ -14,11 +14,31 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import CloseIcon from "@mui/icons-material/Close";
 
+import { FaArrowCircleRight } from "react-icons/fa";
+
+import { FaCircleArrowLeft } from "react-icons/fa6";
+
+import Comments from "../assets/icons/Comments";
+
+import Like from "../assets/icons/Like";
+import Likecover from "../assets/icons/Likecover";
+import Share  from  "../assets/icons/Share";
+
+
+
+
+
 function PostItem({ post }) {
   const MAX_IMAGES = 4;
   const phots = post.pictures || [];
+  const attachment = post.attachment || [];
+  const videos = post.videos || [];
   let pictures = [];
   let remainingImagesCount = 0;
+
+  const [like, setLike] = useState(post.isLiked);
+
+  post.created_at = new Date(post.created_at);
 
   if (post && Array.isArray(post.pictures)) {
     pictures = post.pictures.slice(0, MAX_IMAGES);
@@ -34,6 +54,8 @@ function PostItem({ post }) {
   const openModal = (index) => {
     setCurrentImageIndex(index);
     setModalIsOpen(true);
+    
+    console.log(phots[currentImageIndex].url);
   };
 
   const closeModal = () => {
@@ -86,27 +108,29 @@ function PostItem({ post }) {
             alt="Remy Sharp"
             src="/broken-image.jpg"
           >
-            {post.first_name[0]}
+            {post.first_name[0].toUpperCase()}
           </Avatar>
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Typography
               variant="h8"
               sx={{ mt: "10px", ml: "12px", mr: "8px", color: "black" }}
             >
-              {post.first_name} {post.last_name}
+              {post.first_name.charAt(0).toUpperCase() + post.first_name.slice(1)} {post.last_name.charAt(0).toUpperCase() + post.last_name.slice(1)}
             </Typography>
 
             <div style={{ mt: "10px", ml: "12px", mr: "8px", color: "black" }}>
-              <span className="secondspan">🕛 {post.created_at} on</span>
+              <span className="secondspan">🕛 {
+               
+              post.created_at.toISOString().slice(0, 19).replace('T', ' ')} on</span>
 
               <span className="mainspan"> {post.classname}</span>
             </div>
           </Box>
         </Box>
         <Box>
-          <IconButton>
+          {/* <IconButton>
             <BookmarkBorderIcon />
-          </IconButton>
+          </IconButton> */}
           <IconButton>
             <MoreVertIcon />
           </IconButton>
@@ -163,11 +187,66 @@ function PostItem({ post }) {
             ))}
         </Box>
 
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          {attachment.map((attach, index) => (
+            <div key={attach.id} style={{ position: "relative" }}>
+              {/* <img
+                key={attach.id} // Ensure each image has a unique key
+                width="50px"
+                height="50px"
+                src={attach.url}
+                alt={`Attachment ${index}`} // Provide appropriate alt text for accessibility
+              /> */}
+
+              {console.log("attache", attach)}
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  width="50px"
+                  height="50px"
+                  src="
+                  ../../public/file-blank-solid-240.png"
+                />
+
+                <a
+                  href={`http://127.0.0.1:8000/storage/${attach.url}`}
+                  download
+                >
+                  {" "}
+                  {attach.url.slice(17)}{" "}
+                </a>
+              </div>
+            </div>
+          ))}
+        </Box>
+
+        <Box>
+          {videos.map((video, index) => (
+            <div key={video.id} style={{ position: "relative" }}>
+              <video
+                key={video.id} // Ensure each image has a unique key
+                width="100%"
+                height="auto"
+                controls
+              >
+                <source
+                  src={`http://127.0.0.1:8000/storage/../public/posts/video/${video.url}`}
+                  type="video/mp4"
+                />    
+              </video>
+            </div>
+          ))}
+          
+
+
+
+        </Box>
+
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={closeModal}
           style={{
             content: {
+              position: "absolute",
               top: "50%",
               left: "50%",
               right: "auto",
@@ -177,8 +256,15 @@ function PostItem({ post }) {
               padding: 0,
               border: "none",
               background: "#fff",
-              maxWidth: "80%",
-              maxHeight: "80%",
+              maxWidth: "100%",
+              maxHeight: "100%",
+             
+              zIndex: 1000,
+              // width: "550px",
+              // height: "auto",
+             
+             
+             
             },
             overlay: {
               backgroundColor: "rgba(0, 0, 0, 0.7)",
@@ -191,6 +277,9 @@ function PostItem({ post }) {
               justifyContent: "space-between",
               alignItems: "center",
               padding: "10px",
+              bqckground: "#40d74a",
+               position: "relative",
+              //  zIndex: 2000,
             }}
           >
             <button
@@ -201,12 +290,16 @@ function PostItem({ post }) {
                 background: "#333",
                 color: "#fff",
                 cursor: "pointer",
+                position: "absolute",
+                top: "1050%",
+                left: "0px",
+              
               }}
               onClick={prevSlide}
             >
-              <ArrowBackIosIcon />
+              <FaCircleArrowLeft sx={{}} />
             </button>
-            <button
+            {/* <button
               style={{
                 padding: "8px 16px",
                 borderRadius: "5px",
@@ -217,8 +310,8 @@ function PostItem({ post }) {
               }}
               onClick={closeModal}
             >
-              <CloseIcon />
-            </button>
+              {/* <CloseIcon /> }
+            </button> */}
             <button
               style={{
                 padding: "8px 16px",
@@ -227,10 +320,14 @@ function PostItem({ post }) {
                 background: "#333",
                 color: "#fff",
                 cursor: "pointer",
+                position: "absolute",
+                top: "1050%",
+                right: "0px",
+
               }}
               onClick={nextSlide}
             >
-              <NavigateNextIcon />
+              <FaArrowCircleRight />
             </button>
           </div>
           <span
@@ -246,18 +343,20 @@ function PostItem({ post }) {
           >
             &times;
           </span>
+          <div style={{paddding:'0px 50px'}}>
           {phots[currentImageIndex] && (
             <img
-              src={`http://127.0.0.1:8000/storage/app/public/posts/picture/${phots[currentImageIndex].url}`}
+              src={`http://127.0.0.1:8000/storage/${phots[currentImageIndex].url}`}
               alt="post"
               style={{
                 objectFit: "contain",
                 width: "440px",
-                height: "auto",
-                maxHeight: "calc(100vh - 120px)",
+                height: "440px",
+                // maxHeight: "calc(100vh - 120px)",
               }}
             />
           )}
+          </div>
         </Modal>
       </Box>
       <Box
@@ -270,22 +369,27 @@ function PostItem({ post }) {
       >
         <Box>
           <IconButton>
-            <ThumbUpOffAltIcon />
+            {like? <Likecover /> : <Like />}
+            {/* <Like /> */}
           </IconButton>
+
+         
           likes {post.likes_count}
         </Box>
         <Box>
           <IconButton>
-            <ChatBubbleOutlineIcon />
+            <Comments /> 
           </IconButton>
           {/* comments {post.comments_count} */}
+
+        Comment
         </Box>
 
         <Box>
           <IconButton>
-            <SendIcon />
+            <BookmarkBorderIcon />
           </IconButton>
-          Share
+          Save
         </Box>
       </Box>
 

@@ -32,6 +32,8 @@ function Drawers({drawerWidth,showdrawer,drawertype,funclosedrawer}) {
         sx={{
           display : {xs:`${showdrawer}`,sm:'block'},
           width: `${drawerWidth}px`,
+          // position: 'absolute',
+          // zIndex:10,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: `${drawerWidth}px`,

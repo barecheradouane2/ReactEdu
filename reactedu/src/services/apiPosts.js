@@ -24,11 +24,11 @@ export async function CreatePostAdmin(payload) {
 }
 
 
-export async function GetSchoolPosts(school_id , pageParam = 1) {
+export async function GetSchoolPosts(school_id , pageParam ) {
     console.log("GetSchoolPosts function called with pageParam:", pageParam);
     try {
         const response = await axiosClient.get(`/posts/school/${school_id}?page=${pageParam}`);
-        console.log("response.data:", response.data);
+     
         return response.data;
     } catch (error) {
         console.error("Error fetching School posts:", error);

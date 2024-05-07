@@ -15,7 +15,7 @@ function FileUploadButton({ children, setattachment, setposttype,ressource, setr
 
      let ressoursefilter=ressource.filter((item)=>item.type=='file');
 
-     setressource([...ressoursefilter, { type: 'file', url: files[0].name }]); // Adjusted to correctly add each URL as an object
+     setressource([...ressoursefilter, { type: 'file', url: files[0] }]); // Adjusted to correctly add each URL as an object
     
     console.log(ressource);
 

@@ -1,173 +1,66 @@
-import { Box } from "@mui/material";
-import PostItem from "./PostItem";
-import { useQuery } from "@tanstack/react-query";
-
-import { GetSchoolPosts } from "../services/apiPosts";
-import Loading from "../utlis/Loading";
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
-// import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-
+import React, { useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { LastPage } from "@mui/icons-material";
+import { useLocation } from "react-router-dom";
+import PostItem from "./PostItem";
+import Loading from "../utlis/Loading";
+import { GetSchoolPosts } from "../services/apiPosts";
 import { useInView } from "react-intersection-observer";
-import React from "react";
 
-// created_at: "2024-02-23T21:00:00.000Z",
 function PostList() {
-  // const [mydata, setData] = useState([]);
-
-  // const [page, setPage] = useState(1);
-  // const location = useLocation();
-  // const { school_id } = location.state;
-
-  // // Fetch data using useQuery hook instead of prefetchQuery
-  // const { data, isLoading, error } = useQuery({
-  //   queryKey: ["posts", school_id, page],
-  //   queryFn: async () => {
-  //     try {
-  //       const data = await GetSchoolPosts(school_id, page);
-  //       // Add data validation here if needed
-  //       return data;
-  //     } catch (error) {
-  //       console.error("Error fetching school posts:", error);
-  //       throw error; // Rethrow for error handling in the component
-  //     }
-  //   },
-  // });
-
-  // const handleScroll = () => {
-  //   if (
-  //     window.innerHeight + document.documentElement.scrollTop ===
-  //     document.documentElement.offsetHeight
-  //   ) {
-  //     //   fetchData();
-  //     setPage((prev)=>setPage(prev+1))
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, []);
-
-  // if (isLoading) return <Loading />;
-
-  // const myposts = data.data;
-  // //   const myposts = [
-  //     {
-  //       id: 1,
-  //       first_name: "Bareche",
-  //       last_name: "Radouane",
-  //       classname: "Arabic 2AM3",
-  //       created_at: "2024-02-23",
-  //       text: "was fun day with our kids",
-  //       photos: [
-  //         {
-  //           id: 1,
-  //           url: "../../public/Frame 7080.png",
-  //         },
-  //         {
-  //           id: 2,
-  //           url: "../../public/بوضياف.jpg",
-  //         },
-  //         {
-  //           id: 5,
-  //           url: "../../public/Frame 7080.png",
-  //         },
-  //         {
-  //           id: 6,
-  //           url: "../../public/300212184_174802558415318_277866569872518107_n.jpg",
-  //         },
-  //         {
-  //           id: 1,
-  //           url: "../../public/cropped_school-classroom-1-3-scaled 1.png",
-  //         },
-  //       ],
-  //       likes_count: 5,
-  //       comments_count: 1,
-  //       comments: [
-  //         {
-  //           id: 2,
-  //           first_name: "Aichi",
-  //           last_name: "Abdljbar",
-  //           text: "thank you",
-  //           likes_count: 1,
-  //           replies: [
-  //             {
-  //               id: 1,
-  //               first_name: "Bareche",
-  //               last_name: "Radouane",
-  //               text: "you are welcome",
-  //               likes_count: 1,
-  //             },
-  //           ],
-  //         },
-  //         {
-  //           id: 3,
-  //           first_name: "Nedjah",
-  //           last_name: "Anis",
-  //           text: "nice day",
-  //           likes_count: 0,
-  //           replies: [
-  //             {
-  //               id: 1,
-  //               first_name: "Bareche",
-  //               last_name: "Radouane",
-  //               text: "thanks anis ",
-  //               likes_count: 1,
-  //             },
-  //           ],
-  //         },
-  //       ],
-  //     },
-  //   ];
-  // const location = useLocation();
-  // const { school_id } = location.state;
-
   const location = useLocation();
   const { school_id } = location.state;
+  const [pageParam, setPageParam] = useState(1);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, error } =
-    useInfiniteQuery({
-      queryKey: "schoolPosts",
-      queryFn: ({ pageParam = 1 }) => GetSchoolPosts(pageParam),
-      getNextPageParam: (lastPage, allPages) => {
-        const nextPage = lastPage.meta.current_page + 1;
-        return nextPage <= lastPage.meta.last_page ? nextPage : undefined;
-      },
-    });
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery(
+  ["posts", school_id], // Add pageParam to the query key
+  ({ pageParam = 1 }) => GetSchoolPosts(school_id, pageParam),
+  {
+    getNextPageParam: (lastPage) => {
+      // console.log("lastPage is ",lastPage.meta.current_page);
+      const nextPage = lastPage.meta.current_page + 1;
+      
 
-    
-  
+      return nextPage <= lastPage.meta.last_page ? nextPage : null;
+    },
+  }
+);
 
-  console.log("data", data);
-
-  const loadMoreButtonRef = React.useRef();
-
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-  });
+  const [ref, inView] = useInView();
 
   React.useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
+    if (inView  && hasNextPage) {
       fetchNextPage();
     }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [inView, fetchNextPage,hasNextPage]);
+
+  if (isLoading) return <Loading />;
+
+  if (error) {
+    // Handle error, e.g., display an error message
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
     <div>
       {data.pages.map((page, pageIndex) => (
         <React.Fragment key={pageIndex}>
-          {page.data.map((post) => (
-            // Render your post component here
-            <PostItem key={post.id} post={post} />
-          ))}
+          <div style={{ display: "flex", flexDirection: "column", gap: "25px" }}>
+            {page.data.map((post) => (
+              <PostItem key={post.id} post={post} />
+            ))}
+          </div>
         </React.Fragment>
       ))}
-      <div ref={loadMoreButtonRef} />
-      {isFetchingNextPage ? <div>Loading...</div> : null}
+      <div ref={ref}>
+        {isFetchingNextPage && <span>loading....</span>} {/* Display loading indicator */}
+      </div>
     </div>
   );
 }
