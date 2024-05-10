@@ -3,16 +3,13 @@ import { Avatar } from "@mui/material";
 import { deepOrange } from "@mui/material/colors";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import SendIcon from "@mui/icons-material/Send";
+
 import CommentList from "./CommentList";
 import Reply from "./Reply";
-import React, { useState } from "react";
+import { useState } from "react";
 import Modal from "react-modal";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import CloseIcon from "@mui/icons-material/Close";
+
+import { FaBookmark } from "react-icons/fa";
 
 import { FaArrowCircleRight } from "react-icons/fa";
 
@@ -22,13 +19,18 @@ import Comments from "../assets/icons/Comments";
 
 import Like from "../assets/icons/Like";
 import Likecover from "../assets/icons/Likecover";
-import Share  from  "../assets/icons/Share";
+import Share from "../assets/icons/Share";
+import { LikePost } from "../services/apiPosts.js";
+import { useQuery } from "@tanstack/react-query";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {SavePost} from "../services/apiPosts.js"
+// import { FaBookmark } from "react-icons/fa";
 
+import { toast } from "react-hot-toast";
+import Loading from "../utlis/Loading";
 
-
-
-function PostItem({ post }) {
+function PostItem({ post ,postsave}) {
   const MAX_IMAGES = 4;
   const phots = post.pictures || [];
   const attachment = post.attachment || [];
@@ -37,6 +39,8 @@ function PostItem({ post }) {
   let remainingImagesCount = 0;
 
   const [like, setLike] = useState(post.isLiked);
+  const [likeCount, setLikeCount] = useState(post.likes_count);
+  const [save, setSave] = useState(post.isSaved);
 
   post.created_at = new Date(post.created_at);
 
@@ -54,7 +58,7 @@ function PostItem({ post }) {
   const openModal = (index) => {
     setCurrentImageIndex(index);
     setModalIsOpen(true);
-    
+
     console.log(phots[currentImageIndex].url);
   };
 
@@ -85,8 +89,56 @@ function PostItem({ post }) {
     cursor: "pointer",
   };
 
+  const queryClient = useQueryClient();
+
+  const { mutate: Addlike, isLoading } = useMutation({
+    mutationFn: LikePost,
+    onSuccess: () => {
+      queryClient.invalidateQueries("posts");
+      setLike(!like);
+      setLikeCount(like == true ? likeCount - 1 : likeCount + 1);
+
+      // toast.success("you Like the post");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+  function handleLikepost() {
+    const payload = {
+      id: post.id,
+    };
+
+    Addlike(payload);
+  }
+  const { mutate: savepost } = useMutation({
+    mutationFn: SavePost,
+    onSuccess: () => {
+      queryClient.invalidateQueries("posts");
+    
+
+       toast.success("you save the post");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }, });
+
+  function handleSavePost() {
+    const payload = {
+      id: post.id,
+    };
+    setSave(true);
+    savepost(payload);
+    
+  }
+
+
+  console.log(postsave.save=='yes'&& post.isSaved==true)
+  // if (isLoading) return <Loading />;
+
   return (
-    <Box
+    ( (postsave.save=='yes'&& post.isSaved==true) || (postsave.save!='yes')  )&& (
+   <Box
       sx={{
         backgroundColor: "white",
         px: "15px",
@@ -115,13 +167,17 @@ function PostItem({ post }) {
               variant="h8"
               sx={{ mt: "10px", ml: "12px", mr: "8px", color: "black" }}
             >
-              {post.first_name.charAt(0).toUpperCase() + post.first_name.slice(1)} {post.last_name.charAt(0).toUpperCase() + post.last_name.slice(1)}
+              {post.first_name.charAt(0).toUpperCase() +
+                post.first_name.slice(1)}{" "}
+              {post.last_name.charAt(0).toUpperCase() + post.last_name.slice(1)}
             </Typography>
 
             <div style={{ mt: "10px", ml: "12px", mr: "8px", color: "black" }}>
-              <span className="secondspan">🕛 {
-               
-              post.created_at.toISOString().slice(0, 19).replace('T', ' ')} on</span>
+              <span className="secondspan">
+                🕛{" "}
+                {post.created_at.toISOString().slice(0, 19).replace("T", " ")}{" "}
+                on
+              </span>
 
               <span className="mainspan"> {post.classname}</span>
             </div>
@@ -231,14 +287,10 @@ function PostItem({ post }) {
                 <source
                   src={`http://127.0.0.1:8000/storage/../public/posts/video/${video.url}`}
                   type="video/mp4"
-                />    
+                />
               </video>
             </div>
           ))}
-          
-
-
-
         </Box>
 
         <Modal
@@ -258,13 +310,10 @@ function PostItem({ post }) {
               background: "#fff",
               maxWidth: "100%",
               maxHeight: "100%",
-             
+
               zIndex: 1000,
               // width: "550px",
               // height: "auto",
-             
-             
-             
             },
             overlay: {
               backgroundColor: "rgba(0, 0, 0, 0.7)",
@@ -278,7 +327,7 @@ function PostItem({ post }) {
               alignItems: "center",
               padding: "10px",
               bqckground: "#40d74a",
-               position: "relative",
+              position: "relative",
               //  zIndex: 2000,
             }}
           >
@@ -293,7 +342,6 @@ function PostItem({ post }) {
                 position: "absolute",
                 top: "1050%",
                 left: "0px",
-              
               }}
               onClick={prevSlide}
             >
@@ -323,7 +371,6 @@ function PostItem({ post }) {
                 position: "absolute",
                 top: "1050%",
                 right: "0px",
-
               }}
               onClick={nextSlide}
             >
@@ -343,19 +390,19 @@ function PostItem({ post }) {
           >
             &times;
           </span>
-          <div style={{paddding:'0px 50px'}}>
-          {phots[currentImageIndex] && (
-            <img
-              src={`http://127.0.0.1:8000/storage/${phots[currentImageIndex].url}`}
-              alt="post"
-              style={{
-                objectFit: "contain",
-                width: "440px",
-                height: "440px",
-                // maxHeight: "calc(100vh - 120px)",
-              }}
-            />
-          )}
+          <div style={{ paddding: "0px 50px" }}>
+            {phots[currentImageIndex] && (
+              <img
+                src={`http://127.0.0.1:8000/storage/${phots[currentImageIndex].url}`}
+                alt="post"
+                style={{
+                  objectFit: "contain",
+                  width: "440px",
+                  height: "440px",
+                  // maxHeight: "calc(100vh - 120px)",
+                }}
+              />
+            )}
           </div>
         </Modal>
       </Box>
@@ -368,26 +415,23 @@ function PostItem({ post }) {
         }}
       >
         <Box>
-          <IconButton>
-            {like? <Likecover /> : <Like />}
+          <IconButton onClick={handleLikepost}>
+            {like ? <Likecover /> : <Like />}
             {/* <Like /> */}
           </IconButton>
-
-         
-          likes {post.likes_count}
+          likes {likeCount}
         </Box>
         <Box>
           <IconButton>
-            <Comments /> 
+            <Comments />
           </IconButton>
           {/* comments {post.comments_count} */}
-
-        Comment
+          Comment {post.comments_count}
         </Box>
 
         <Box>
-          <IconButton>
-            <BookmarkBorderIcon />
+          <IconButton onClick={handleSavePost}>
+          {save?<FaBookmark/>:<BookmarkBorderIcon />}  
           </IconButton>
           Save
         </Box>
@@ -401,17 +445,17 @@ function PostItem({ post }) {
           borderTop: "1px solid #e0e0e0",
         }}
       >
-        <Reply first_name={post.first_name} />
+        <Reply id={post.id} first_name={post.first_name} type={"comment"} />
 
         <Box
           className="comments"
           sx={{ display: "flex", flexDirection: "column" }}
         >
-          {/* {<CommentList comments={post.comments} />} */}
+          {<CommentList id={post.id} />}
         </Box>
       </Box>
     </Box>
-  );
+  ));
 }
 
 export default PostItem;

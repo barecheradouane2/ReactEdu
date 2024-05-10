@@ -14,6 +14,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
 import { useParams } from "react-router-dom";
 import SearchInput from "./SearchInput";
+import { useLocation } from "react-router-dom";
 
 
 function Drawers({drawerWidth,showdrawer,drawertype,funclosedrawer}) {
@@ -26,6 +27,12 @@ function Drawers({drawerWidth,showdrawer,drawertype,funclosedrawer}) {
     // Implement your search logic here using the searchText
     console.log('Searching for:', searchText);
   };
+// i have to check this men 
+  const location = useLocation();
+  const { school_id } = location.state;
+  const { schoolName } = useParams();
+
+ 
 
     return (
         <Drawer
@@ -103,7 +110,9 @@ function Drawers({drawerWidth,showdrawer,drawertype,funclosedrawer}) {
 
           </Link>
 
-          <Link to={`/schools/${schoolname}/bookmarks`}  style={{textDecoration:'none'}}>
+          <Link to={`/schools/${schoolName}/bookmarks`}  state={{ school_id: school_id}} style={{textDecoration:'none'}}>
+
+        
 
           <ListItem disablePadding>
             <ListItemButton>

@@ -4,44 +4,80 @@ import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import Avatar from "@mui/material/Avatar";
 import { deepOrange } from "@mui/material/colors";
 import { useQuery } from "@tanstack/react-query";
- 
-import {CreateComment} from "../services/apiComment";
+
+import { CreateComment } from "../services/apiComment";
 import { useMutation } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import Loading from "../utlis/Loading";
+import Share from "../assets/icons/Share";
+import { CreateReply } from "../services/apiComment";
 
-function Reply({ first_name }) {
+import { useRef } from "react";
 
+function Reply({ id, first_name, type }) {
   // const { isLoading, data: comments } = useQuery(["comment"], CreateComment);
 
   const queryClient = useQueryClient();
+  const textRef = useRef();
 
-  const { isLoading,mutate:create } = useMutation({
-    mutationFn: CreateComment ,
+  const { mutate: createcomment, isLoading } = useMutation({
+    mutationFn: CreateComment,
     onSuccess: () => {
-      queryClient.invalidateQueries("comment");
+      queryClient.invalidateQueries("comments");
       queryClient.invalidateQueries("posts");
       toast.success("Comment Created Successfully");
     },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+  const { mutate: createreply, isLoading: isLoadingReply } = useMutation({
+    mutationFn: CreateReply,
+    onSuccess: () => {
+      queryClient.invalidateQueries("comments");
+      queryClient.invalidateQueries("posts");
+      toast.success("Reply Created Successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
   });
 
-  if(isLoading) return <Loading />;
+  function handleAddComment() {
+    const payload = {
+      id: id,
+      text: textRef.current.value,
+    };
 
+    createcomment(payload);
+  }
+  function handleAddReply() {
+    const payload = {
+      id: id,
+      text: `@${first_name.charAt(0).toUpperCase()+first_name.slice(1)}`+" "+textRef.current.value,
+    };
 
+    createreply(payload);
+  }
+  function handlesubmit(){
+    if(type==="comment"){
+      handleAddComment();
+    }else{
+      handleAddReply();
+    }
+  }
 
+  if (isLoading) return <Loading />;
+  if (isLoadingReply) return <Loading />;
 
-
-
-
-   
   return (
     <div
       className="createcomments"
       style={{
         display: "flex",
         alignItems: "center",
-         margin: "10px 0px",
+        margin: "10px 0px",
         padding: "5px 0px",
         gap: "5px",
       }}
@@ -68,6 +104,7 @@ function Reply({ first_name }) {
         <input
           type="text"
           placeholder="write a comment"
+          ref={textRef}
           style={{
             backgroundColor: "#F6F6F6",
             border: "none",
@@ -78,11 +115,17 @@ function Reply({ first_name }) {
             width: "100%",
           }}
         />
-        <IconButton>
+        {/* <IconButton>
           <CropOriginalIcon />
-        </IconButton>
+        </IconButton> */}
         <IconButton>
           <InsertEmoticonIcon />
+        </IconButton>
+        <IconButton
+          onClick={() => handlesubmit()}
+          sx={{ marginRight: "10px" }}
+        >
+          <Share />
         </IconButton>
       </div>
     </div>

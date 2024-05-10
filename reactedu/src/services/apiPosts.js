@@ -36,3 +36,47 @@ export async function GetSchoolPosts(school_id , pageParam ) {
     }
 }
 
+export async function LikePost(payload){
+    try {
+        const response = await axiosClient.post(`/posts/${payload.id}/likes`);
+        return response.data;
+    } catch (error) {
+        console.error("Error for Like Post :", error);
+        throw error; // Rethrow the error to be handled by the caller
+    }
+}
+
+export async function LikeComment(payload){
+    try {
+        const response = await axiosClient.post(`/posts/${payload.id}/like`);
+        return response.data;
+    } catch (error) {
+        console.error("Error for Like Comment :", error);
+        throw error; // Rethrow the error to be handled by the caller
+    }
+}
+
+export async function LikeReply(payload){
+    try {
+        const response = await axiosClient.post(`/posts/replies/${payload.id}/like`);
+        return response.data;
+    } catch (error) {
+        console.error("Error for Like Reply :", error);
+        throw error; // Rethrow the error to be handled by the caller
+    }
+}
+
+export async function SavePost(payload){
+    try{
+        const response = await axiosClient.post(`/posts/${payload.id}/toggle-save`);
+        return response.data;
+
+    }catch(error){
+        console.error("Error for Save a Post :", error);
+        throw error; // Rethrow the error to be handled by the caller
+
+    }
+
+
+}
+

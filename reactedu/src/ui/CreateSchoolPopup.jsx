@@ -30,8 +30,8 @@ function CreateSchoolPopup({ showCreatePopup, closeshowCreatePopup, school }) {
   let { user, setUser, _setUser } = useStateContext();
   //this it dosen't work
   const [type, setType] = useState( school && school.teacher_id !== undefined? "Class" : "School");
-  console.log(school && school.teacher_id !== undefined);
-  console.log(type);
+  // console.log(school && school.teacher_id !== undefined);
+  // console.log(type);
 
   
   const schoolname = useRef(null);

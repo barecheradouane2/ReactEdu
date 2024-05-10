@@ -6,10 +6,11 @@ import Loading from "../utlis/Loading";
 import { GetSchoolPosts } from "../services/apiPosts";
 import { useInView } from "react-intersection-observer";
 
-function PostList() {
+function PostList(save) {
   const location = useLocation();
   const { school_id } = location.state;
   const [pageParam, setPageParam] = useState(1);
+ 
 
   const {
     data,
@@ -52,13 +53,14 @@ function PostList() {
       {data.pages.map((page, pageIndex) => (
         <React.Fragment key={pageIndex}>
           <div style={{ display: "flex", flexDirection: "column", gap: "25px" }}>
+            
             {page.data.map((post) => (
-              <PostItem key={post.id} post={post} />
+             <PostItem key={post.id} post={post}  postsave={save}/>
             ))}
           </div>
         </React.Fragment>
       ))}
-      <div ref={ref}>
+      <div ref={ref} style={{display:'flex',justifyContent:'center',margintop:"15px"}}>
         {isFetchingNextPage && <span>loading....</span>} {/* Display loading indicator */}
       </div>
     </div>

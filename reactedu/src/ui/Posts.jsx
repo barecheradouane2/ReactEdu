@@ -5,7 +5,7 @@ function Posts() {
     return (
         <Box sx={{ mb:'15px',width:{ lg: '552px'},marginTop:'65px'}}>
               <CreatePost/>
-              <PostList/>
+              <PostList save={"no"}/>
         </Box>
     )
 }
