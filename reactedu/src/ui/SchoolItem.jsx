@@ -36,7 +36,7 @@ function SchoolItem({ school,id }) {
       variant="elevation"
       sx={{
         padding: "10px",
-        height: "200px",
+        height: "220px",
 
         overflow: "hidden",
         position: "relative",

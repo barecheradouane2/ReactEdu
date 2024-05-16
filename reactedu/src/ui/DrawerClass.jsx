@@ -130,7 +130,9 @@ function DrawerClass({ drawerWidth, showdrawer, drawertype, funclosedrawer }) {
           </div>
           <p style={{fontSize:'13px'}}>Browse</p>
           <List>
-            <Link to="/schools" style={{ textDecoration: "none" }}>
+            <Link to="/schools" style={{ textDecoration: "none" }} 
+            
+            >
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemIcon>

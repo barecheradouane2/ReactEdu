@@ -32,7 +32,7 @@ function JoinSchool() {
            
             {shouldHideDrawer ? <DrawerClass drawerWidth={drawerWidth} showdrawer={showdrawer} drawertype={drawertype} funclosedrawer={funcCloseDrawer}/>
            : <Drawers drawerWidth={drawerWidth} showdrawer={showdrawer} drawertype={drawertype} funclosedrawer={funcCloseDrawer}/>}
-            <Body drawerWidth={drawerWidth}>
+            <Body drawerWidth={drawerWidth} >
                 <Outlet />
             </Body>
         </>

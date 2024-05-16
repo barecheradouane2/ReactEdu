@@ -16,9 +16,9 @@ import BookMarks from "./views/BookMarks.jsx";
 import Calender from "./views/Calender.jsx";
 import Children from "./views/Children.jsx";
 import Classes from "./views/Classes.jsx";
-import Events from "./views/Events.jsx";
-import Friends from "./views/Friends.jsx";
 import Settings from "./views/Settings.jsx";
+import Members from "./views/Members.jsx";
+import JoinRequests from "./views/JoinRequests.jsx";
 
 
 
@@ -75,12 +75,12 @@ const router = createBrowserRouter([
                 element: <Classes />,
               },
               {
-                path: "events",
-                element: <Events />,
+                path: "joinrequests",
+                element: <JoinRequests />,
               },
               {
-                path: "friends",
-                element: <Friends />,
+                path: "Members",
+                element: <Members />,
               },
               {
                 path: "settings",
@@ -88,6 +88,10 @@ const router = createBrowserRouter([
               },
             ],
           },
+          {
+            path: ":classname",
+            element: <Classes />,
+          }
         ],
       },
     ],

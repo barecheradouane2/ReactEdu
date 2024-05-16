@@ -3,7 +3,7 @@ import AvatarGroup from '@mui/material/AvatarGroup';
 
 function Covegroupe() {
     return (
-        <div className='Covegroupe'>
+        <div className='Covegroupe' style={{marginTop:'65px'}}>
             <div><img src="../../public/Classroom-Procedures-min 1.png" alt="" 
             width='100%' /></div>
           <div className='head'>

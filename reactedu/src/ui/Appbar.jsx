@@ -33,9 +33,10 @@ import Notificationicon from "../assets/icons/Notificationicon";
 
 import Logout from "@mui/icons-material/Logout";
 import { useStateContext } from "../context/ContextProvider";
+
 function Appbar({ drawerWidth, funshowdrawer }) {
   const [notif, setnotifi] = useState(false);
-  const { user } = useStateContext();
+  const { user, token, setUser, setToken } = useStateContext();
   console.log(user);
 
   const notification = [
@@ -62,12 +63,21 @@ function Appbar({ drawerWidth, funshowdrawer }) {
   ];
 
   const [anchorEl, setAnchorEl] = useState(null);
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const handlelogout = () => {
+    localStorage.removeItem("ACCESS_TOKEN");
+    localStorage.removeItem("UserInfo");
+    setToken(null);
+    setUser(null);
+
+    console.log("logout");
   };
   return (
     <>
@@ -102,11 +112,7 @@ function Appbar({ drawerWidth, funshowdrawer }) {
             <MenuIcon />
           </IconButton>
 
-          <Box>
-
-            {drawerWidth === 0 &&  <img src="../../public/logo.png" />}
-           
-          </Box>
+          <Box>{drawerWidth === 0 && <img src="../../public/logo.png" />}</Box>
 
           {/* <ButtonGroup
             variant="outlined"
@@ -246,7 +252,7 @@ function Appbar({ drawerWidth, funshowdrawer }) {
                 <ListItemIcon>
                   <PersonAdd fontSize="small" />
                 </ListItemIcon>
-                Add another account
+                Add child
               </MenuItem>
               <MenuItem onClick={handleClose}>
                 <ListItemIcon>
@@ -254,7 +260,7 @@ function Appbar({ drawerWidth, funshowdrawer }) {
                 </ListItemIcon>
                 Settings
               </MenuItem>
-              <MenuItem onClick={handleClose}>
+              <MenuItem onClick={()=>handlelogout()}>
                 <ListItemIcon>
                   <Logout fontSize="small" />
                 </ListItemIcon>

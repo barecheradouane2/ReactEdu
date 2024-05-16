@@ -26,10 +26,10 @@ import Schoolcreation from "../utlis/schoolcreation";
 import { CreateClass } from "../services/apiClass";
 import { UpdateClass } from "../services/apiClass";
 
-function CreateSchoolPopup({ showCreatePopup, closeshowCreatePopup, school }) {
+function CreateSchoolPopup({ showCreatePopup, closeshowCreatePopup, school,where,theid }) {
   let { user, setUser, _setUser } = useStateContext();
   //this it dosen't work
-  const [type, setType] = useState( school && school.teacher_id !== undefined? "Class" : "School");
+  const [type, setType] = useState( (school && school.teacher_id !== undefined)||(where=='school')? "Class" : "School");
   // console.log(school && school.teacher_id !== undefined);
   // console.log(type);
 
@@ -92,8 +92,11 @@ function CreateSchoolPopup({ showCreatePopup, closeshowCreatePopup, school }) {
   const { mutate: CreateClasss, isLoading: classloading } = useMutation({
     mutationFn: CreateClass,
     onSuccess: () => {
-      toast.success("Class created successfully");
+
       queryClient.invalidateQueries("classes");
+      queryClient.invalidateQueries("SchoolClasses");
+      toast.success("Class created successfully");
+     
     },
     onError: () => {
       toast.error("Error creating class");
@@ -105,6 +108,7 @@ function CreateSchoolPopup({ showCreatePopup, closeshowCreatePopup, school }) {
     onSuccess: () => {
       toast.success("Class updated successfully");
       queryClient.invalidateQueries("classes");
+      queryClient.invalidateQueries("SchoolClasses");
     },
     onError: () => {
       toast.error("Error updating class");
@@ -115,6 +119,10 @@ function CreateSchoolPopup({ showCreatePopup, closeshowCreatePopup, school }) {
     e.preventDefault();
     const file = schoolimg.current?.files[0];
     const payload = new FormData();
+    if(where=='school'){
+      console.log("it enter men ")
+      payload.append("school_id",theid );
+    }
     payload.append("name", classname.current.value);
     payload.append("grade_level", grade_level.current.value);
     payload.append("subject", subject.current.value);
@@ -127,6 +135,9 @@ function CreateSchoolPopup({ showCreatePopup, closeshowCreatePopup, school }) {
     e.preventDefault( );
     const file = schoolimg.current?.files[0];
     const payload = new FormData();
+    if(where=='school'){
+      payload.append("school_id", theid);
+    }
     payload.append("id", school.id);
     payload.append("_method", "PUT");
     payload.append("name", classname.current.value);
@@ -183,7 +194,7 @@ function CreateSchoolPopup({ showCreatePopup, closeshowCreatePopup, school }) {
             select
             label="Select"
             defaultValue={type}
-            disabled={school != null}
+            disabled={(school != null)|| (where=='school')}
             helperText="Please select your Type of School/Class"
             onChange={(e) => setType(e.target.value)}
           >

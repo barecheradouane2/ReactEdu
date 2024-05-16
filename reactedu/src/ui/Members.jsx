@@ -81,7 +81,7 @@ function Members() {
 
 
     return (
-        <div style={{width:'280px',backgroundColor:'white',
+        <div style={{width:'280px',backgroundColor:'white',marginTop:'65px',
         height:'fit-content',padding:'15px'}} >
           <div className="divmemberhead" >
             <div style={{display:'flex',alignItems:'center',gap:'4px'}}> <GroupsOutlinedIcon/> <span  className="mainspansm" >Members</span></div>

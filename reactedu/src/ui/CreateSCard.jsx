@@ -2,10 +2,10 @@
 import DemoPaper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
-function CreateSCard({funcshowCreatePopup}) {
+function CreateSCard({funcshowCreatePopup,type}) {
     return (
         <DemoPaper variant="elevation"  sx={
-            {padding:'10px',height:'200px',display:'flex'
+            {padding:'10px',height:'220px',display:'flex'
             ,flexDirection:'column',justifyContent:'center',alignItems:'center',gap:'10px'
         }
             }>
@@ -18,7 +18,7 @@ function CreateSCard({funcshowCreatePopup}) {
             }}
             onClick={funcshowCreatePopup}
             >+</Button>
-            <Typography>Create School/Class</Typography>
+            <Typography>{type!='Class'?"Create School/Class":" Create Class"}</Typography>
             
             
             </DemoPaper>

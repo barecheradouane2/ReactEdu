@@ -8,44 +8,58 @@ import List from '@mui/material/List';
 import Groupe from './Groupe'
 import CakeIcon from '@mui/icons-material/Cake';
 import Event from './Event';
+import { useLocation } from 'react-router-dom';
+import { useQuery } from "@tanstack/react-query";
+import { getSchoolMembers } from '../services/apiSchool';
+import Loading from '../utlis/Loading';
+import { Co2Sharp } from '@mui/icons-material';
 function Contacts() {
-    const contacts = [
-        {
-            id: 1,
-            first_name: 'Bareche',
-            last_name: 'Radouane',
-        },
-        {
-            id: 2,
-            first_name: 'Aichi',
-            last_name: 'Abdljbar',
-        },
-        {
-            id: 3,
-            first_name: 'Hassan',
-            last_name: 'Toumi',
-        },
-        {
-            id: 4,
-            first_name: 'Sofia',
-            last_name: 'Belkacem',
-        },
-        {
-            id: 5,
-            first_name: 'Yassine',
-            last_name: 'Benali',
-        },
-        {
-            id: 6,
-            first_name: 'Nadia',
-            last_name: 'Hamidi',
-        },
-        {
-            id: 7,
-            first_name: 'Ali',
-            last_name: 'Kader',
-        }
-    ];
+
+    const location = useLocation();
+    const { school_id } = location.state;
+    console.log(school_id);
+    const { isLoading: lodingMembers, data } = useQuery(
+        ["SchoolMembers", school_id],
+        () => getSchoolMembers(school_id)
+      );
+      if(lodingMembers) return  <Loading/>;
+    // const contacts = [
+    //     {
+    //         id: 1,
+    //         first_name: 'Bareche',
+    //         last_name: 'Radouane',
+    //     },
+    //     {
+    //         id: 2,
+    //         first_name: 'Aichi',
+    //         last_name: 'Abdljbar',
+    //     },
+    //     {
+    //         id: 3,
+    //         first_name: 'Hassan',
+    //         last_name: 'Toumi',
+    //     },
+    //     {
+    //         id: 4,
+    //         first_name: 'Sofia',
+    //         last_name: 'Belkacem',
+    //     },
+    //     {
+    //         id: 5,
+    //         first_name: 'Yassine',
+    //         last_name: 'Benali',
+    //     },
+    //     {
+    //         id: 6,
+    //         first_name: 'Nadia',
+    //         last_name: 'Hamidi',
+    //     },
+    //     {
+    //         id: 7,
+    //         first_name: 'Ali',
+    //         last_name: 'Kader',
+    //     }
+    // ];
     const groups=[
         {
             id: 1,
@@ -71,6 +85,11 @@ function Contacts() {
         },
        
     ];
+
+    const teachercontacts = data.slice(1,8).filter((contact) => contact.role === 'teacher');
+    const contacts=[data[0],...teachercontacts]
+
+
     
     return (
         <Box   style={{height:'fit-content',width:'250px',borderRadius:'15px',marginTop:'65px'}} className='contact'>
@@ -86,11 +105,11 @@ function Contacts() {
 
         </Event> */}
             <div className="conctactheader">
-                <span className='spantitle'>Contacts</span>
+                <span className='spantitle'>Members</span>
                 <div className='contacticons'>
-                    <IconButton><VideocamIcon/></IconButton>
+                    {/* <IconButton><VideocamIcon/></IconButton> */}
                     <IconButton><SearchIcon/></IconButton>
-                    <IconButton><SettingsIcon/></IconButton>
+                    {/* <IconButton><SettingsIcon/></IconButton> */}
                 </div>
             </div>
 
@@ -101,7 +120,7 @@ function Contacts() {
             </div>
 
             <div className="contactgroupe" style={{padding:'10px 0px'}}>
-                <span className='spantitle'>Groups</span>
+                <span className='spantitle'>My Classes</span>
                 <div style={{padding:' 0px',margin:'0px'}}>
                     {groups.map((group) => (
                        

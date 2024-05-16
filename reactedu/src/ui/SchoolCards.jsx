@@ -58,10 +58,12 @@ function SchoolCards() {
   return (
     <Grid container spacing={2} sx={{ padding: "25px", marginTop: "65px" }}>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        <CreateSCard funcshowCreatePopup={funcshowCreatePopup} />
+        <CreateSCard funcshowCreatePopup={funcshowCreatePopup}  type={'School/Class'}/>
         <CreateSchoolPopup
           showCreatePopup={showCreatePopup}
           closeshowCreatePopup={closeshowCreatePopup}
+          where={'everyone'}
+          theid={null}
         />
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
@@ -90,7 +92,7 @@ function SchoolCards() {
         .filter((clase) => clase.school_id === null)
         .map((clase) => (
           <Grid key={clase.id} item xs={12} sm={6} md={4} lg={3}>
-            <ClassItem mycalss={clase} id={userData.data.id} />
+            <ClassItem mycalss={clase} id={userData.data.id} is_member={1} />
           </Grid>
         ))}
     </Grid>

@@ -15,6 +15,19 @@ html, body, #root, #defaultLayout, #guestLayout {
 h1, h2, h3, h4, h5, h6, p {
     margin: 0;
 }
+:root {
+    --color-blue-100: #e3f2fd; /* Light blue */
+    --color-blue-700: #1976d2; /* Dark blue */
+  
+    --color-green-100: #d0f2c4; /* Light green */
+    --color-green-700: #388e3c; /* Dark green */
+  
+    --color-indigo-100: #c5cae9; /* Light indigo */
+    --color-indigo-700: #3949ab; /* Dark indigo */
+  
+    --color-yellow-100: #fff9c4; /* Light yellow */
+    --color-yellow-700: #f9a825; /* Dark yellow */
+  }
 
 body {
     font-family: 'Open Sans', sans-serif;
@@ -38,7 +51,7 @@ input {
 }
 
 input:focus {
-    border-color: #5b08a7;
+    border-color: var(--color-blue-700);
 }
 
 .btn,
@@ -47,7 +60,7 @@ input:focus {
 .btn-delete {
     font-family: "Roboto", sans-serif;
     outline: 0;
-    background: #5b08a7;
+    background: var(--color-blue-700);
     border: 0;
     text-decoration: none;
     padding: 15px;
@@ -90,7 +103,7 @@ input:focus {
 .btn:hover,
 .btn:active,
 .btn:focus {
-    background: #5b08a7;
+    background: var(--color-blue-700);
 }
 
 .text-center {
@@ -176,7 +189,7 @@ table > tbody > tr > td {
 }
 
 .login-signup-form .form .message a {
-    color: #5b08a7;
+    color: var(--color-blue-700);
     text-decoration: none;
 }
 
@@ -189,7 +202,7 @@ table > tbody > tr > td {
 
 #defaultLayout aside {
     width: 240px;
-    background-color: #5b08a7;
+    background-color: var(--color-blue-700);
     padding: 1rem
 }
 

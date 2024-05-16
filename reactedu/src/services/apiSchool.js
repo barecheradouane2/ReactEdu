@@ -55,3 +55,42 @@ export async function JoinSchool (payload) {
   }
 }
 
+export async function getSchoolMembers(id) {
+  try {
+    const response = await axiosClient.get(`/schools/${id}/members`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching school members:", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+
+export async function RemoveMember(payload) {
+  try {
+    const response = await axiosClient.delete(`/schools/${payload.id}/members`);
+    return response.data;
+  } catch (error) {
+    console.error("Error for removing member :", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+
+export async function getSchoolClasses(id) {
+  try {
+    const response = await axiosClient.get(`/schools/${id}/classes`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching school classes:", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+
+export async function LeaveSchool(id) {
+  try {
+    const response = await axiosClient.post(`/schools/${id}/leave`);
+    return response.data;
+  } catch (error) {
+    console.error("Error for LeaveSchool :", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}

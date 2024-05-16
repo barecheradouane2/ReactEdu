@@ -11,7 +11,7 @@ import { CiBarcode } from "react-icons/ci";
 function SearchSchool({toggleSearchPopup,children,type}) {
     return (
         <DemoPaper variant="elevation"  sx={
-            {padding:'10px',height:'200px',display:'flex'
+            {padding:'10px',height:'220px',display:'flex'
             ,flexDirection:'column',justifyContent:'center',alignItems:'center',gap:'10px'
         }
             }>
