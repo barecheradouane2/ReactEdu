@@ -8,6 +8,7 @@ import { RemoveMember } from "../services/apiSchool";
 import { toast } from "react-hot-toast";
 import styled from "styled-components";
 import Stats from "../utlis/Stats";
+import { useEffect } from "react";
 
 const StyledDashboardLayout = styled.div`
   display: grid;
@@ -17,6 +18,8 @@ const StyledDashboardLayout = styled.div`
   gap: 1.5rem;
 `;
 function Members() {
+
+
   const location = useLocation();
   const { school_id } = location.state;
 

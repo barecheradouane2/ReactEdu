@@ -5,11 +5,13 @@ import PostItem from "./PostItem";
 import Loading from "../utlis/Loading";
 import { GetSchoolPosts } from "../services/apiPosts";
 import { useInView } from "react-intersection-observer";
+import { useTranslation } from "react-i18next";
 
 function PostList(save) {
   const location = useLocation();
   const { school_id } = location.state;
   const [pageParam, setPageParam] = useState(1);
+  const { t, i18n } = useTranslation();
  
 
   const {
@@ -57,6 +59,8 @@ function PostList(save) {
             {page.data.map((post) => (
              <PostItem key={post.id} post={post}  postsave={save}/>
             ))}
+            {(page.data.length == 0 && save==true )&& t('empty_bookmarks_posts')}
+            {(page.data.length == 0 && save==false )&& t('no_posts')}
           </div>
         </React.Fragment>
       ))}

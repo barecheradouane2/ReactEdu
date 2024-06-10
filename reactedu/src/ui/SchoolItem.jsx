@@ -11,8 +11,10 @@ import { DeleteSchool } from "../services/apiSchool";
 import { UpdateSchool } from "../services/apiSchool";
 import { toast } from "react-hot-toast";
 import Loading from "../utlis/Loading";
+import { useTranslation } from "react-i18next";
 
-function SchoolItem({ school,id }) {
+function SchoolItem({ school,id,setdata, funcshowCreatePopup }) {
+  const{t}=useTranslation();
   const queryClient = useQueryClient();
 
   const { isLoading,mutate:deleteSchool } = useMutation({
@@ -20,7 +22,11 @@ function SchoolItem({ school,id }) {
     onSuccess: () => {
       queryClient.invalidateQueries("schools");
       queryClient.invalidateQueries("userData");
-      toast.success("School Deleted Successfully");
+      toast.success(t("delete_success"));
+      setdata(null);
+    },
+    onError: (error) => {
+      toast.error(error.response.data.message);
     },
   });
   
@@ -42,11 +48,11 @@ function SchoolItem({ school,id }) {
         position: "relative",
       }}
     >
-    {  school.admin_id == id && <EditDelteMenue  deleteSchool={deleteSchool} school={school}  />} 
+    {  school.admin_id == id && <EditDelteMenue funcshowCreatePopup={funcshowCreatePopup} setdata={setdata} deleteItem={deleteSchool} dataItem={school} type={'school'}  />} 
 
     {/* <Link to={{ pathname: , state: {} }}> */}
 
-      <Link to={`/schools/${encodeURIComponent(school.name)}`}  state={{ school_id: theid}}>
+      <Link to={`/home/schools/${encodeURIComponent(school.name)}`}  state={{ school_id: theid}}>
     
         <Box
           sx={{
@@ -73,7 +79,7 @@ function SchoolItem({ school,id }) {
           </Typography>
           <Typography variant="h7" sx={{ obcity: "0.5" }}>
             {" "}
-            Members :{school.members_count}
+            {t("members")} :{school.members_count}
           </Typography>
         </Box>
       </Link>

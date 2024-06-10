@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
-
-import {IconButton} from '@mui/material';
-
+import { IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 import { styled, alpha } from '@mui/material/styles';
-
-
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   border: '1px solid #eee',
   borderRadius: '15px',
-  backgroundColor:'#eee' ,
- 
+  backgroundColor: '#eee',
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
@@ -40,7 +35,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     width: '100%',
@@ -50,7 +44,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-function SearchInput({ onSearch }) {
+function SearchInput({ toggleSearchPopup, onSearch }) {
   const [searchText, setSearchText] = useState('');
 
   const handleSearch = () => {
@@ -68,15 +62,18 @@ function SearchInput({ onSearch }) {
   };
 
   return (
-    <Search>
-    <SearchIconWrapper>
-      <SearchIcon />
-    </SearchIconWrapper>
-    <StyledInputBase
-      placeholder="Search…"
-      inputProps={{ 'aria-label': 'search' }}
-    />
-  </Search>
+    <Search onFocus={toggleSearchPopup}>
+      <SearchIconWrapper>
+        <SearchIcon />
+      </SearchIconWrapper>
+      <StyledInputBase
+        placeholder="Search…"
+        inputProps={{ 'aria-label': 'search' }}
+        value={searchText}
+        onChange={handleChange}
+        onKeyPress={handleKeyPress}
+      />
+    </Search>
   );
 }
 

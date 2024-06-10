@@ -25,8 +25,10 @@ import { CreatePostAdmin } from "../services/apiPosts";
 import { toast } from "react-hot-toast";
 import { useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 function CreatePost() {
+  const{t}=useTranslation();
   const [imgfile, setimgfile] = useState([]);
   const [videofile, setvideofile] = useState([]);
   const [attachment, setattachment] = useState([]);
@@ -168,7 +170,7 @@ function CreatePost() {
             /> */}
             <textarea
               ref={text}
-              placeholder="write something...🖊"
+              placeholder= {t('write_something')}
               style={{
                 border: "none",
                 outline: "none",
@@ -350,7 +352,7 @@ function CreatePost() {
           >
             {/* <ImageIcon sx={{ color: "#666666" }} /> */}
             <Imageicon />
-            Photos
+            {t('photo')}
           </ImageUploadButton>
           <VideoUploadButton
             setvideofile={setvideofile}
@@ -359,7 +361,7 @@ function CreatePost() {
             ressource={ressource}
           >
             <Videoicon />
-            Video
+            {t('video')}
           </VideoUploadButton>
 
           <FileUploadButton
@@ -369,7 +371,7 @@ function CreatePost() {
             setposttype={setposttype}
           >
             <Calendericon />
-            Attachement
+            {t('attachment')}
           </FileUploadButton>
 
           <FileUploadButton
@@ -380,7 +382,7 @@ function CreatePost() {
           >
             {/* <PollIcon /> */}
             <Pollicon />
-            Polla
+            {t('poll')}
           </FileUploadButton>
           {/* <button  style={{color:'#666666',backgroundColor:'#A1E1FF',flexGrow:'1'}}  > </button> */}
           <button

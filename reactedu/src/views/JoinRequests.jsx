@@ -47,6 +47,7 @@ function JoinRequests() {
   });
 
   if (lodingjoinrequests) return <Loading />;
+  console.log(data);
 
   return (
     <div style={{ marginTop: "65px", width: "100%" }}>

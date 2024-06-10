@@ -15,16 +15,28 @@ import IconButton from "@mui/material/IconButton";
 import { useParams } from "react-router-dom";
 
 import PersonAddAlt1OutlinedIcon from "@mui/icons-material/PersonAddAlt1Outlined";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import EventOutlinedIcon from "@mui/icons-material/EventOutlined";
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 
-function DrawerClass({ drawerWidth, showdrawer, drawertype, funclosedrawer }) {
+import SettingsIcon from "@mui/icons-material/Settings";
+import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
+import Diversity3Icon from "@mui/icons-material/Diversity3";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import EscalatorWarningIcon from "@mui/icons-material/EscalatorWarning";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import GroupIcon from "@mui/icons-material/Group";
+import { LeaveClass } from "../services/apiClass";
+import { useTranslation } from "react-i18next";
+import { useStateContext } from "../context/ContextProvider";
+
+function DrawerClass({
+  school_id,
+  class_id,
+  classinfo,
+  drawerWidth,
+  showdrawer,
+  drawertype,
+  funclosedrawer,
+}) {
   let { schoolname, classname } = useParams();
 
   classname = decodeURIComponent(classname);
@@ -34,28 +46,51 @@ function DrawerClass({ drawerWidth, showdrawer, drawertype, funclosedrawer }) {
     console.log("Searching for:", searchText);
   };
 
+  const [active, setActive] = useState("Class");
+  const Navigate = useNavigate();
+  function handleactive(params) {
+    setActive(params);
+  }
+
   const classes = [
     {
       id: 1,
-      url: "../../public/Classroom-Procedures-min 1 (1).png",
+      url: "/Classroom-Procedures-min 1 (1).png",
     },
     {
       id: 2,
-      url: "../../public/cropped_school-classroom-1-3-scaled 1.png",
+      url: "/cropped_school-classroom-1-3-scaled 1.png",
     },
     {
       id: 3,
-      url: "../../public/pexels-james-wheeler-417074 1.png",
+      url: "/pexels-james-wheeler-417074 1.png",
     },
     {
       id: 4,
-      url: "../../public/Group 26.png",
+      url: "/Group 26.png",
     },
     {
       id: 5,
-      url: "../../public/businessfornature-banner 1.png",
+      url: "/businessfornature-banner 1.png",
     },
   ];
+
+  const { t } = useTranslation();
+
+  function leaveClass() {
+    console.log("leave class");
+    LeaveClass(school_id);
+    Navigate("/classes");
+  }
+
+  const { profileinfo } = useStateContext();
+
+  const isClassAdmin = profileinfo?.owned_classes?.find(
+    (cls) => cls.id === class_id
+  )
+    ? true
+    : false;
+
   return (
     <Drawer
       sx={{
@@ -76,7 +111,7 @@ function DrawerClass({ drawerWidth, showdrawer, drawertype, funclosedrawer }) {
       }}
     >
       <div>
-        <img src="../../public/logo.png" alt="" />
+        <img src="/logo.png" alt="" />
       </div>
 
       <div className=" flex flex-row  justify-around  gap-1">
@@ -102,11 +137,11 @@ function DrawerClass({ drawerWidth, showdrawer, drawertype, funclosedrawer }) {
         <div className=" flex flex-col gap-1">
           <div className=" divgroup flex bg-white px-3 py-3 justify-between	  rounded-lg">
             <div>
-              <span>{classname}</span>
-              <p style={{ color: "#4385F5" }}>26 </p>
+              <span>{classinfo[0].name}</span>
+              <p style={{ color: "#4385F5" }}>{classinfo[0].members_count} </p>
             </div>
 
-            <IconButton>
+            <IconButton onClick={() => leaveClass()}>
               {" "}
               <LoginOutlinedIcon />
             </IconButton>
@@ -122,113 +157,158 @@ function DrawerClass({ drawerWidth, showdrawer, drawertype, funclosedrawer }) {
             }}
           >
             <PersonAddAlt1OutlinedIcon />
-            Save Changes
+            {t("invite_users")}
           </button>
           <div>
-            <span>Code :</span>{" "}
-            <span style={{ color: "#4385F5" }}>{classname}</span>
+            <span>{t("code")}</span>{" "}
+            <span style={{ color: "#4385F5" }}>{classinfo[0].code}</span>
           </div>
-          <p style={{fontSize:'13px'}}>Browse</p>
+          <p style={{ fontSize: "13px" }}>{t("browse")}</p>
           <List>
-            <Link to="/schools" style={{ textDecoration: "none" }} 
-            
-            >
+            <Link to="/home/schools" style={{ textDecoration: "none" }}>
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
                     <HomeIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Home" />
+                  <ListItemText primary={t("home")} />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+            {classinfo[0].school_id != null && (
+              <Link
+                to={`/home/schools/${schoolname}`}
+                state={{ school_id: school_id }}
+                style={{ textDecoration: "none" }}
+              >
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <SchoolIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="School" />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+            )}
+            <Link
+              to={`/home/schools/${schoolname}/classes/${classname}`}
+              state={{ school_id: school_id, class_id: class_id }}
+              style={{ textDecoration: "none" }}
+            >
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => handleactive("Class")}>
+                  <ListItemIcon>
+                    <GroupIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t("class")}
+                    sx={{
+                      color: active === "Class" ? "var(--color-blue-700)" : "",
+                    }}
+                  />
                 </ListItemButton>
               </ListItem>
             </Link>
 
-            <Link
-              to={`/schools/${schoolname}`}
-              style={{ textDecoration: "none" }}
-            >
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <DescriptionOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Attachement" />
-                </ListItemButton>
-              </ListItem>
-            </Link>
-            <Link
-              to={`/schools/${schoolname}`}
-              style={{ textDecoration: "none" }}
-            >
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <BarChartOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Polls" />
-                </ListItemButton>
-              </ListItem>
-            </Link>
-            <Link
-              to={`/schools/${schoolname}`}
-              style={{ textDecoration: "none" }}
-            >
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <EventOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Events" />
-                </ListItemButton>
-              </ListItem>
-            </Link>
-            <Link
-              to={`/schools/${schoolname}`}
-              style={{ textDecoration: "none" }}
-            >
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <EventOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Class Schedule" />
-                </ListItemButton>
-              </ListItem>
-            </Link>
+            {isClassAdmin && (
+              <Link
+                to={`/home/schools/${schoolname}/classes/${classname}/Members`}
+                state={{ school_id: school_id, class_id: class_id }}
+                style={{ textDecoration: "none" }}
+              >
+                <ListItem disablePadding>
+                  <ListItemButton onClick={() => handleactive("Members")}>
+                    <ListItemIcon>
+                      <Diversity3Icon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={t("members")}
+                      sx={{
+                        color:
+                          active === "Members" ? "var(--color-blue-700)" : "",
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+            )}
+
+            {profileinfo.role == "parent" && (
+              <Link
+                to={`/home/schools/${schoolname}/classes/${classname}/Associate`}
+                state={{ school_id: school_id, class_id: class_id }}
+                style={{ textDecoration: "none" }}
+              >
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => handleactive("ManageChildren")}
+                  >
+                    <ListItemIcon>
+                      <EscalatorWarningIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={t("associate_student")}
+                      sx={{
+                        color:
+                          active === "ManageChildren"
+                            ? "var(--color-blue-700)"
+                            : "",
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+            )}
           </List>
-          
-          <p style={{fontSize:'13px'}}>Acces</p>
+
+          <p style={{ fontSize: "13px" }}>{t("acces")}</p>
+
+          {isClassAdmin && (
+            <Link
+              to={`/home/schools/${schoolname}/classes/${classname}/joinrequests`}
+              state={{ school_id: school_id, class_id: class_id }}
+              style={{ textDecoration: "none" }}
+            >
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => handleactive("joinrequests")}>
+                  <ListItemIcon>
+                    <ManageAccountsIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t("class_requests")}
+                    sx={{
+                      color:
+                        active === "joinrequests"
+                          ? "var(--color-blue-700)"
+                          : "",
+                    }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+          )}
           <List>
-            <Link to="/schools" style={{ textDecoration: "none" }}>
+            {/* <Link
+              to={`/home/schools/${schoolname}/classes/${classname}/settings`}
+              state={{ school_id: school_id , class_id : class_id}}
+              style={{ textDecoration: "none" }}
+            >
               <ListItem disablePadding>
-                <ListItemButton>
-                  <PersonOutlinedIcon>
-                    <HomeIcon />
-                  </PersonOutlinedIcon>
-                  <ListItemText primary="Student Report" />
+                <ListItemButton onClick={() => handleactive("Settings")}>
+                  <ListItemIcon>
+                    <SettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Settings"
+                    sx={{
+                      color:
+                        active === "Settings" ? "var(--color-blue-700)" : "",
+                    }}
+                  />
                 </ListItemButton>
               </ListItem>
-            </Link>
-            <Link to="/schools" style={{ textDecoration: "none" }}>
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ChatBubbleOutlineOutlinedIcon>
-                    <HomeIcon />
-                  </ChatBubbleOutlineOutlinedIcon>
-                  <ListItemText primary="Chat" />
-                </ListItemButton>
-              </ListItem>
-            </Link>
-            <Link to="/schools" style={{ textDecoration: "none" }}>
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <SettingsOutlinedIcon>
-                    <HomeIcon />
-                  </SettingsOutlinedIcon>
-                  <ListItemText primary="Settings" />
-                </ListItemButton>
-              </ListItem>
-            </Link>
+            </Link> */}
           </List>
         </div>
       </div>

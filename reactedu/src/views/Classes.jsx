@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import CreateSCard from "../ui/CreateSCard";
 import CreateSchoolPopup from "../ui/CreateSchoolPopup";
@@ -9,17 +9,18 @@ import { useQuery } from "@tanstack/react-query";
 import { getSchoolClasses } from "../services/apiSchool";
 import Loading from "../utlis/Loading";
 import { login } from "../services/apiauth";
-
-
-
+import InternalClasses from "../utlis/InternalClasses";
+import ExternalClasses from "../utlis/ExternalClasses";
+import { GiConsoleController } from "react-icons/gi";
+import Body from "../ui/Body";
 
 
 function Classes() {
-  const [showCreatePopup, setShowCreatePopup] = useState(false);
+  const { user,profileinfo } = useStateContext();
+
   const fetchUserData = async () => {
     try {
       const response = await login(user);
-
       return response;
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -27,57 +28,60 @@ function Classes() {
     }
   };
 
-
-  const { user } = useStateContext();
   const { isLoading, data: userData } = useQuery(["userData"], fetchUserData);
+  console.log(userData);
   
+
+  const [showCreatePopup, setShowCreatePopup] = useState(false);
+  const location = useLocation();
+  const [isInternal, setIsInternal] = useState(false);
+  const [schoolId, setSchoolId] = useState(null);
+  const [data,setdata]=useState(null);
+
+  useEffect(() => {
+    if (location.state && location.state.school_id) {
+      setIsInternal(true);
+      setSchoolId(location.state.school_id);
+    }
+  }, [location.state]);
 
   const funcshowCreatePopup = () => {
     setShowCreatePopup(true);
   };
+  
   const closeshowCreatePopup = () => {
     setShowCreatePopup(false);
   };
-
-  const location = useLocation();
-  const { school_id } = location.state;
-
-  const { isLoading: LoadingClasses, data } = useQuery(
-    ["SchoolClasses", school_id],
-    () => getSchoolClasses(school_id)
-  );
-
-  
-
-  if(LoadingClasses) return <Loading/>;
-
-  console.log(data);
-
-
-
-  
+  if(isLoading) return <Loading />;
 
   return (
     <div style={{ marginTop: "0px", width: "100%" }}>
+   
       <Grid container spacing={2} sx={{ padding: "25px", marginTop: "65px" }}>
-        <Grid item xs={12} sm={6} md={4} lg={3}>
-          <CreateSCard funcshowCreatePopup={funcshowCreatePopup}  type={'Class'}/>
-          <CreateSchoolPopup
+        {isInternal ? (
+          <InternalClasses
+            school_id={schoolId}
             showCreatePopup={showCreatePopup}
+            funcshowCreatePopup={funcshowCreatePopup}
             closeshowCreatePopup={closeshowCreatePopup}
-            where={'school'}
-            theid={school_id}
+            userData={userData}
+            data={data}
+            setdata={setdata}
+           
           />
-        </Grid>
-
-       
-        {data.filter((clase) => clase.class.school_id === school_id).map((clase) => (
-            <Grid key={clase.id} item xs={12} sm={6} md={4} lg={3}>
-              <ClassItem mycalss={clase.class}  is_member={clase.is_member} id={userData.data.id} where={'school'} />
-            </Grid>
-          ))
-          }
+        ) : (
+          <ExternalClasses 
+          showCreatePopup={showCreatePopup}
+          funcshowCreatePopup={funcshowCreatePopup}
+          closeshowCreatePopup={closeshowCreatePopup}
+          userData={userData}
+          data={data}
+          setdata={setdata}
+          
+          />
+        )}
       </Grid>
+    
     </div>
   );
 }

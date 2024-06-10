@@ -14,12 +14,14 @@ import Share from "../assets/icons/Share";
 import { CreateReply } from "../services/apiComment";
 
 import { useRef } from "react";
+// import { useTranslation } from "react-i18next";
 
 function Reply({ id, first_name, type }) {
   // const { isLoading, data: comments } = useQuery(["comment"], CreateComment);
 
   const queryClient = useQueryClient();
   const textRef = useRef();
+  const {t}=useTranslation();
 
   const { mutate: createcomment, isLoading } = useMutation({
     mutationFn: CreateComment,
@@ -103,7 +105,7 @@ function Reply({ id, first_name, type }) {
       >
         <input
           type="text"
-          placeholder="write a comment"
+          placeholder= {type=='comment'?t('write_comment'):t('write_reply')}
           ref={textRef}
           style={{
             backgroundColor: "#F6F6F6",
@@ -131,5 +133,6 @@ function Reply({ id, first_name, type }) {
     </div>
   );
 }
+import { useTranslation } from "react-i18next";
 
 export default Reply;

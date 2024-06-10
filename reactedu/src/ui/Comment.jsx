@@ -15,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import {LikeComment} from "../services/apiPosts";
 import { LikeReply } from "../services/apiPosts";
+import { useTranslation } from "react-i18next";
 
 
 function Comment({ comment, type }) {
@@ -22,6 +23,7 @@ function Comment({ comment, type }) {
   const queryClient = useQueryClient();
   const [replies, setreplies] = useState(false);
   const [reply, setreply] = useState(false);
+  const {t}=useTranslation();
 
   const [like, setlike] = useState(comment.isLiked);
 
@@ -119,7 +121,7 @@ function Comment({ comment, type }) {
 
               <span style={{ fontSize: "11px", color: "#212121" }}>
                 {" "}
-                Replay Comments
+                {t('reply_comments')}
                 {comment.replies && (
                   <span
                     style={{
@@ -141,7 +143,7 @@ function Comment({ comment, type }) {
               </IconButton>
               <span style={{ fontSize: "11px", color: "#212121" }}>
                 {" "}
-                Reply {comment.comments_count}{" "}
+                {t('reply')} {comment.comments_count}{" "}
               </span>
             </div>
           </>
@@ -153,7 +155,7 @@ function Comment({ comment, type }) {
           </IconButton>
           <span style={{ fontSize: "11px", color: "#212121" }}>
             {" "}
-            Like {comment.likes_count}{" "}
+            {t('likes')} {comment.likes_count}{" "}
           </span>
         </div>
       </div>

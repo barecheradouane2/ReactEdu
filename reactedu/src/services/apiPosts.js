@@ -23,7 +23,6 @@ export async function CreatePostAdmin(payload) {
     }
 }
 
-
 export async function GetSchoolPosts(school_id , pageParam ) {
     console.log("GetSchoolPosts function called with pageParam:", pageParam);
     try {
@@ -78,5 +77,36 @@ export async function SavePost(payload){
     }
 
 
+}
+
+export async  function explorePosts(pageParam){
+    try {
+        console.log("explorePosts function called with pageParam:", pageParam);
+        const response = await axiosClient.get(`/posts/user/posts?page=${pageParam}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error for Explore Posts :", error);
+        throw error; // Rethrow the error to be handled by the caller
+    }
+}
+
+
+export async function AddClassPosts(payload){
+    try {
+        const response = await axiosClient.post(`/posts`, payload);
+        return response.data;
+    } catch (error) {
+        console.error("Error for Adding Class Posts :", error);
+        throw error; // Rethrow the error to be handled by the caller
+    }
+}
+export async function GetClassPosts(class_id , pageParam){
+    try {                              
+        const response = await axiosClient.get(`/posts/class/${class_id}?page=${pageParam}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error for Getting Class Posts :", error);
+        throw error; // Rethrow the error to be handled by the caller
+    }
 }
 

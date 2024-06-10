@@ -2,7 +2,13 @@
 import DemoPaper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+
 function CreateSCard({funcshowCreatePopup,type}) {
+    const {t} = useTranslation();
+    console.log(t('create_school'));
+
+
     return (
         <DemoPaper variant="elevation"  sx={
             {padding:'10px',height:'220px',display:'flex'
@@ -18,7 +24,10 @@ function CreateSCard({funcshowCreatePopup,type}) {
             }}
             onClick={funcshowCreatePopup}
             >+</Button>
-            <Typography>{type!='Class'?"Create School/Class":" Create Class"}</Typography>
+             {/* <Typography>{type !== 'Class' ? {t('create_school')} : 'Create Class'}</Typography> */}
+
+          { type !== 'Class'&& <Typography>{t('create_school')}</Typography>} 
+          { type == 'Class'&& <Typography>{t('create_class')}</Typography>} 
             
             
             </DemoPaper>

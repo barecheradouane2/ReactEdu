@@ -14,28 +14,30 @@ import IconButton from "@mui/material/IconButton";
 import { IoPersonRemove } from "react-icons/io5";
 import { MdDone } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 
 export default function TableExample({Members, type, removemember,refuse,approve}) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   console.log("********",type==='member');
+  const {t}=useTranslation();
 
   const columns = [
     {
       id: "profile_picture",
-      label: "Profile_picture",
+      label: t('picture'),
       minWidth: 170,
     },
-    { id: "first_name", label: "First_name", minWidth: 170 },
-    { id: "last_name", label: "Last_name", minWidth: 100 },
+    { id: "first_name", label:t('first_name'), minWidth: 170 },
+    { id: "last_name", label: t('last_name'), minWidth: 100 },
 
     {
       id: "role",
-      label: `Role`,
+      label: t('occupation'),
       minWidth: 170,
       align: "right",
     },
-    { id: "Remove", label: "Remove", minWidth: 170, align: "right" },
+    { id: "Remove", label: t('remove_member'), minWidth: 170, align: "right" },
   ];
 
   function createData(

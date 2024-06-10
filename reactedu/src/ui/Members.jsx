@@ -3,6 +3,8 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import IconButton from '@mui/material/IconButton';
 import ContactItem from "./ContactItem";
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
+
 
 function Members() {
   const [inputVisible, setInputVisible] = useState(false);
@@ -11,10 +13,12 @@ function Members() {
   };
   const [clickparent, setClickparent] = useState(true);
   const [clickstudent, setClickstudent] = useState(false);
+  const {t}=useTranslation();
 
   const [membertype,setmembertype]=useState(false);
   
   function changeType(type){
+   
    
     if(type=="Parents"){
       setmembertype(false);
@@ -84,7 +88,7 @@ function Members() {
         <div style={{width:'280px',backgroundColor:'white',marginTop:'65px',
         height:'fit-content',padding:'15px'}} >
           <div className="divmemberhead" >
-            <div style={{display:'flex',alignItems:'center',gap:'4px'}}> <GroupsOutlinedIcon/> <span  className="mainspansm" >Members</span></div>
+            <div style={{display:'flex',alignItems:'center',gap:'4px'}}> <GroupsOutlinedIcon/> <span  className="mainspansm" >{t('members')}</span></div>
                <form>{inputVisible && (
                  <div>
                   <input type="text" className="searchinput" />
@@ -93,8 +97,8 @@ function Members() {
             <div>  <IconButton onClick={toggleInputVisibility}> <SearchOutlinedIcon/></IconButton>  </div>
            </div>
            <div className="divselect" >
-            <button className={clickparent ? "selectbtn" : "noselectbtn" } onClick={()=>changeType("Parents")}>Parents ({parents.length})</button>
-            <button className={clickstudent ?  "selectbtn" : "noselectbtn"} onClick={()=>changeType("Students")}>Students ({students.length})</button>
+            <button className={clickparent ? "selectbtn" : "noselectbtn" } onClick={()=>changeType("Parents")}>{t('parent')} ({parents.length})</button>
+            <button className={clickstudent ?  "selectbtn" : "noselectbtn"} onClick={()=>changeType("Students")}>{t('students')} ({students.length})</button>
            </div>
 
            <div className="body">

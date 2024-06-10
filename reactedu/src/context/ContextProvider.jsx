@@ -13,6 +13,7 @@ const StateContext = createContext({
 export const ContextProvider = ({children}) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('UserInfo')));
   const [token, _setToken] = useState(localStorage.getItem('ACCESS_TOKEN'));
+  const [profileinfo,setprofileinfo]=useState(JSON.parse(localStorage.getItem('profileinfo')));
   //const [notification, _setNotification] = useState('');
 
   const setToken = (token) => {
@@ -33,6 +34,15 @@ export const ContextProvider = ({children}) => {
     }
   }
 
+  const _setprofileinfo = (userinfo) => {
+    setprofileinfo(userinfo);
+    if (userinfo) {
+      localStorage.setItem('profileinfo', JSON.stringify(userinfo));
+    } else {
+      localStorage.removeItem('profileinfo');
+    }
+  }
+
 //   const setNotification = message => {
 //     _setNotification(message);
 
@@ -48,6 +58,9 @@ export const ContextProvider = ({children}) => {
       _setUser,
       token,
       setToken,
+      profileinfo,
+      setprofileinfo,
+      _setprofileinfo
      
     }}>
       {children}

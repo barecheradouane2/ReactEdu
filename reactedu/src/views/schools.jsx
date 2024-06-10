@@ -5,15 +5,33 @@ import SchoolCards from "../ui/SchoolCards"
 import {Outlet} from "react-router-dom"
 import Appbar from "../ui/Appbar"
 
+import {useState} from "react"
+import HomeDrawer from "../ui/HomeDrawer"
+
+
 function Schools() {
-    const drawerWidth = 0;
+    const [showdrawer, setShowDrawer] = useState('none');
+    const [drawertype, setDrawerType] = useState('permanent');
+    const drawerWidth = 300;
     const funshowdrawer = () => {
         return;
     }
+
+    const funShowDrawer = () => {
+        setShowDrawer('block');
+        setDrawerType('temporary');
+    }
+
+    const funcCloseDrawer = () => {
+        setDrawerType('permanent');
+        setShowDrawer('none');
+    }
+    
     return (
         <div>
+            <HomeDrawer drawerWidth={drawerWidth} showdrawer={showdrawer} drawertype={drawertype} funclosedrawer={funcCloseDrawer}/>
              <Appbar drawerWidth={drawerWidth}  funshowdrawer={funshowdrawer}/>
-                <SchoolCards/>
+                <SchoolCards  drawerWidth={drawerWidth}/>
              
             
     

@@ -20,9 +20,11 @@ import { JoinSchool } from "../services/apiSchool";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 function SearchSchoolPopup({ showSearchPopup, toggleSearchPopup }) {
   const [SearchSchoolId, setSearchSchoolId] = useState(null);
+  const { t } = useTranslation();
 
   const queryClient = useQueryClient();
 
@@ -35,15 +37,12 @@ function SearchSchoolPopup({ showSearchPopup, toggleSearchPopup }) {
   const { mutate: handleJoinSchool } = useMutation({
     mutationFn: JoinSchool,
     onSuccess: (response) => {
-     
       toast.success(response.message);
 
       queryClient.invalidateQueries("schools");
     },
     onError: (error) => {
-     
       toast.error(error.response.data.error);
-     
     },
   });
 
@@ -55,8 +54,6 @@ function SearchSchoolPopup({ showSearchPopup, toggleSearchPopup }) {
     handleJoinSchool(payload);
   };
 
- 
-
   if (isLoading) return <Loading />;
   return (
     <Dialog
@@ -67,8 +64,7 @@ function SearchSchoolPopup({ showSearchPopup, toggleSearchPopup }) {
       maxWidth="sm"
     >
       <DialogTitle>
-        {" "}
-        Search School{" "}
+        {t("search_school")}
         <IconButton onClick={toggleSearchPopup} style={{ float: "right" }}>
           <CloseIcon color="primary"></CloseIcon>
         </IconButton>{" "}
@@ -103,7 +99,9 @@ function SearchSchoolPopup({ showSearchPopup, toggleSearchPopup }) {
                 <div style={{ fontSize: "11px" }}>{option.address}</div>
               </li>
             )}
-            renderInput={(params) => <TextField {...params} label="School" />}
+            renderInput={(params) => (
+              <TextField {...params} label={t("school")} />
+            )}
             onChange={(event, value) => {
               setSearchSchoolId(value.id);
             }}
@@ -114,7 +112,7 @@ function SearchSchoolPopup({ showSearchPopup, toggleSearchPopup }) {
             variant="contained"
             onClick={() => sendjoinschool(SearchSchoolId)}
           >
-            Join
+            {t("join_school")}
           </Button>
         </Stack>
       </DialogContent>

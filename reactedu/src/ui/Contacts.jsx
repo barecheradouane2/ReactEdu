@@ -13,8 +13,9 @@ import { useQuery } from "@tanstack/react-query";
 import { getSchoolMembers } from '../services/apiSchool';
 import Loading from '../utlis/Loading';
 import { Co2Sharp } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 function Contacts() {
-
+      const {t}=useTranslation();
     const location = useLocation();
     const { school_id } = location.state;
     console.log(school_id);
@@ -105,7 +106,7 @@ function Contacts() {
 
         </Event> */}
             <div className="conctactheader">
-                <span className='spantitle'>Members</span>
+                <span className='spantitle'>{t('members')}</span>
                 <div className='contacticons'>
                     {/* <IconButton><VideocamIcon/></IconButton> */}
                     <IconButton><SearchIcon/></IconButton>
@@ -120,7 +121,7 @@ function Contacts() {
             </div>
 
             <div className="contactgroupe" style={{padding:'10px 0px'}}>
-                <span className='spantitle'>My Classes</span>
+                <span className='spantitle'>{t('my_classes')}</span>
                 <div style={{padding:' 0px',margin:'0px'}}>
                     {groups.map((group) => (
                        

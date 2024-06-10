@@ -16,6 +16,8 @@ h1, h2, h3, h4, h5, h6, p {
     margin: 0;
 }
 :root {
+    --main-color:#648DDB;
+    --color-secondary:  #989898;   
     --color-blue-100: #e3f2fd; /* Light blue */
     --color-blue-700: #1976d2; /* Dark blue */
   
@@ -424,4 +426,9 @@ Link{
     /* width: 550px; */
     height: fit-content;
     
+}
+
+
+Textfield{
+   background-color:var(--main-color);
 }

@@ -12,35 +12,37 @@
 
 
   import Stat from "./Stat";
+import { useTranslation } from "react-i18next";
   
   function Stats({ Members}) {
     console.log(Members)
     const teacher=Members.filter((member)=>member.role==="teacher");
     const parents=Members.filter((member)=>member.role==="parent");
     const admin=Members.filter((member)=>member.role==="admin");
+    const {t}=useTranslation();
    
     return (
       <>
          <Stat
-          title="Members"
+          title={t("members")}
           color="blue"
           icon={<FaPeopleGroup />}
           value={Members.length}
         />
         <Stat
-          title="Teachers"
+          title={t("teacher")}
           color="green"
           icon={<GiTeacher />}
           value={teacher.length}
         />
         <Stat
-          title="Parents"
+          title={t("parent")}
           color="indigo"
           icon={<RiParentFill />}
           value={parents.length}
         />
         <Stat
-          title="Admin"
+          title={t("Admins")}
           color="yellow"
           icon={<RiAdminFill />}
           value={admin.length}

@@ -6,9 +6,11 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 import { FaSchoolLock } from "react-icons/fa6";
 import { CiBarcode } from "react-icons/ci";
+import { useTranslation } from 'react-i18next';
 
 
 function SearchSchool({toggleSearchPopup,children,type}) {
+    const {t}=useTranslation();
     return (
         <DemoPaper variant="elevation"  sx={
             {padding:'10px',height:'220px',display:'flex'

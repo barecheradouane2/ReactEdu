@@ -18,13 +18,17 @@ import ConfirmationModal from "../utlis/ConfirmationModal";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-function ClassItem({ mycalss, id, where, is_member }) {
+function ClassItem({ funcshowCreatePopup,data,setdata,school_id, mycalss, id, where, is_member }) {
   const [open, setOpen] = useState(false);
+  const {t}=useTranslation();
+  // console.log(mycalss);
+  //  console.log("this is school id",school_id);
 
-  // const location = useLocation();
+  const location = useLocation();
   // const { school_id } = location.state;
-  const school_id=0;
+  // const school_id=0;
   // const { schoolname, classname } = useParams();
 
   const { schoolname } = useParams();
@@ -51,8 +55,16 @@ function ClassItem({ mycalss, id, where, is_member }) {
     onSuccess: () => {
       queryClient.invalidateQueries("classes");
       queryClient.invalidateQueries("userData");
-      toast.success("Class Deleted Successfully");
+      queryClient.invalidateQueries(["SchoolClasses", school_id]);
+      queryClient.invalidateQueries(["classes", school_id]);
+
+      toast.success(t("delete_success"));
+      // toast.success("Class Deleted Successfully");
     },
+    onError: (error) => {
+      console.log("why the user he can not delete the class",data);
+     
+    }
   });
 
   const { isLoading: loadingjoin, mutate: joinclassrequests } = useMutation({
@@ -116,7 +128,8 @@ function ClassItem({ mycalss, id, where, is_member }) {
         }}
       >
         {mycalss.teacher_id == id && (
-          <EditDelteMenue deleteSchool={deleteclass} school={mycalss.class} />
+          // <EditDelteMenue funcshowCreatePopup={funcshowCreatePopup} setdata={setdata} deleteItem={deleteSchool} dataItem={school} type={'school'}  />
+          <EditDelteMenue funcshowCreatePopup={funcshowCreatePopup}  data={data} setdata={setdata} deleteItem={deleteclass} dataItem={mycalss}  type={'class'}/>
         )}
 
         {is_member != 1 ? (
@@ -144,12 +157,12 @@ function ClassItem({ mycalss, id, where, is_member }) {
               {mycalss.name.charAt(0).toUpperCase() + mycalss.name.slice(1)}
             </Typography>
             <Typography variant="h8" sx={{ color:"var(--color-blue-700)" }}>
-              {" "}
-              Admin :{mycalss.teacher_first_name.charAt(0).toUpperCase()+mycalss.teacher_first_name.slice(1) + " " + mycalss.teacher_last_name.charAt(0).toUpperCase()+mycalss.teacher_last_name.slice(1)}
+             
+              {t("class_admin")} :{mycalss.teacher_first_name.charAt(0).toUpperCase()+mycalss.teacher_first_name.slice(1) + " " + mycalss.teacher_last_name.charAt(0).toUpperCase()+mycalss.teacher_last_name.slice(1)}
             </Typography>
             <Typography variant="h7" sx={{ obcity: "0.5" }}>
-              {" "}
-              Members :{mycalss.members_count}
+          
+              {t("members")} :{mycalss.members_count}
             </Typography>
             <Box>
               {is_member == 2 ? (
@@ -167,9 +180,9 @@ function ClassItem({ mycalss, id, where, is_member }) {
           </Box>
         ) : (
           <Link
-            to={`/schools/${schoolname}/${encodeURIComponent(mycalss.name)}`}
+            to={`/home/schools/${schoolname}/classes/${encodeURIComponent(mycalss.name)}`}
             style={{ textDecoration: "none" }}
-            state={{ school_id:  school_id}}
+            state={{ school_id:  school_id , class_id: mycalss.id}}
           >
             <Box
               sx={{

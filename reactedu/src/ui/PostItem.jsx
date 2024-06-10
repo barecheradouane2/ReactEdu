@@ -29,8 +29,10 @@ import {SavePost} from "../services/apiPosts.js"
 
 import { toast } from "react-hot-toast";
 import Loading from "../utlis/Loading";
+import { useTranslation } from "react-i18next";
 
 function PostItem({ post ,postsave}) {
+  const {t}=useTranslation();
   const MAX_IMAGES = 4;
   const phots = post.pictures || [];
   const attachment = post.attachment || [];
@@ -419,21 +421,21 @@ function PostItem({ post ,postsave}) {
             {like ? <Likecover /> : <Like />}
             {/* <Like /> */}
           </IconButton>
-          likes {likeCount}
+          {t('likes')} {likeCount}
         </Box>
         <Box>
           <IconButton>
             <Comments />
           </IconButton>
           {/* comments {post.comments_count} */}
-          Comment {post.comments_count}
+          {t('comments')} {post.comments_count}
         </Box>
 
         <Box>
           <IconButton onClick={handleSavePost}>
           {save?<FaBookmark/>:<BookmarkBorderIcon />}  
           </IconButton>
-          Save
+          
         </Box>
       </Box>
 

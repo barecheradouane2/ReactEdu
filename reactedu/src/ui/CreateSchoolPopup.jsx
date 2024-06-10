@@ -1,238 +1,155 @@
-import React, { useContext, useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
   TextField,
+  IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import InputFileUpload from "./InputFileUpload";
-import { CreateSchool } from "../services/apiSchool";
-
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
-import { UpdateSchool } from "../services/apiSchool";
-import { useStateContext } from "../context/ContextProvider";
-
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { CreateSchool, UpdateSchool } from "../services/apiSchool";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import MenuItem from "@mui/material/MenuItem";
-import { useState } from "react";
-import Classcreation from "../utlis/Classcreation";
-import Schoolcreation from "../utlis/schoolcreation";
-import { CreateClass } from "../services/apiClass";
-import { UpdateClass } from "../services/apiClass";
+import Popup from "../utlis/Popup";
+import { useTranslation } from "react-i18next";
 
-function CreateSchoolPopup({ showCreatePopup, closeshowCreatePopup, school,where,theid }) {
-  let { user, setUser, _setUser } = useStateContext();
-  //this it dosen't work
-  const [type, setType] = useState( (school && school.teacher_id !== undefined)||(where=='school')? "Class" : "School");
-  // console.log(school && school.teacher_id !== undefined);
-  // console.log(type);
-
-  
+function CreateSchoolPopup({
+  showCreatePopup,
+  closeshowCreatePopup,
+  data,
+  setdata,
+}) {
+  const { t } = useTranslation();
   const schoolname = useRef(null);
   const schooladdress = useRef(null);
-  const schoolimg = useRef(null);
+  const schoolimgInput = useRef(null);  // Reference to the input element
 
-  const classname = useRef(null);
-  const grade_level = useRef(null);
-  const subject = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFileName, setSelectedFileName] = useState('');
+  const [selectedFileURL, setSelectedFileURL] = useState('');
+  const [fileKey, setFileKey] = useState(Date.now());
 
   const queryClient = useQueryClient();
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate: create, isLoading: LoadingCreate } = useMutation({
     mutationFn: CreateSchool,
-    onSuccess: (data) => {
-      toast.success("School created successfully");
-      //setschools(prevSchools => [...prevSchools, data]);
-
+    onSuccess: () => {
+      toast.success(t("create_success"));
       queryClient.invalidateQueries("schools");
       queryClient.invalidateQueries("userData");
     },
-    onError: () => {
-      toast.error("Error  of creating school");
+    onError: (error) => {
+      console.log(error.response.data.error);
+      toast.error(error.response.data.error);
     },
   });
+
   const { mutate: update, isLoading: isUpdating } = useMutation({
     mutationFn: UpdateSchool,
     onSuccess: () => {
-      toast.success("School Updated Successfully");
-      // setschools(prevSchools => prevSchools.filter(item => item.id !== school.id));
-      console.log("School updated  successfully");
+      toast.success(t("update_success"));
       queryClient.invalidateQueries("schools");
       queryClient.invalidateQueries("userData");
     },
     onError: () => {
-      console.log("Error creating school");
+      toast.error(t("update_error"));
     },
   });
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);  // Store the file itself
+      setSelectedFileName(file.name);
+      setSelectedFileURL(URL.createObjectURL(file));
+      setFileKey(Date.now()); // Force re-render the file input
+    }
+  };
+
+  const handleFileClick = () => {
+    schoolimgInput.current.click();
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedFile(null);
+    setSelectedFileName('');
+    setSelectedFileURL('');
+    setFileKey(Date.now()); // Force re-render the file input
+  };
 
   const onSubmit = () => {
-    const file = schoolimg.current?.files[0];
     const payload = new FormData();
     payload.append("name", schoolname.current.value);
     payload.append("address", schooladdress.current.value);
-    payload.append("image", file);
-
-    mutate(payload);
-  };
-  const onUpdate = () => {
-    const file = schoolimg.current?.files[0];
-    const payload = new FormData();
-    payload.append("name", schoolname.current.value);
-    payload.append("address", schooladdress.current.value);
-    payload.append("image", file);
-    update(payload);
-  };
-  // dealing wtih class creation and update
-  const { mutate: CreateClasss, isLoading: classloading } = useMutation({
-    mutationFn: CreateClass,
-    onSuccess: () => {
-
-      queryClient.invalidateQueries("classes");
-      queryClient.invalidateQueries("SchoolClasses");
-      toast.success("Class created successfully");
-     
-    },
-    onError: () => {
-      toast.error("Error creating class");
-    },
-  });
-
-  const { mutate: UpdateClasss ,isloading:isUpdatingclass} = useMutation({
-    mutationFn: UpdateClass,
-    onSuccess: () => {
-      toast.success("Class updated successfully");
-      queryClient.invalidateQueries("classes");
-      queryClient.invalidateQueries("SchoolClasses");
-    },
-    onError: () => {
-      toast.error("Error updating class");
-    },
-  });
-
-  const submitClass = (e) => {
-    e.preventDefault();
-    const file = schoolimg.current?.files[0];
-    const payload = new FormData();
-    if(where=='school'){
-      console.log("it enter men ")
-      payload.append("school_id",theid );
+    if (selectedFile) {
+      payload.append("image", selectedFile);  // Append the file itself
     }
-    payload.append("name", classname.current.value);
-    payload.append("grade_level", grade_level.current.value);
-    payload.append("subject", subject.current.value);
-    // payload.append("image", file);
 
-    CreateClasss(payload);
-  };
+    // Log the FormData contents
+    payload.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });
 
-  const onupdateClass = (e) => {
-    e.preventDefault( );
-    const file = schoolimg.current?.files[0];
-    const payload = new FormData();
-    if(where=='school'){
-      payload.append("school_id", theid);
+    if (data == null) {
+      create(payload);
+      setdata(null);
+    } else {
+      payload.append("school_id", data?.id);
+      payload.append("_method", "PUT");
+      update(payload);
     }
-    payload.append("id", school.id);
-    payload.append("_method", "PUT");
-    payload.append("name", classname.current.value);
-    payload.append("grade_level", grade_level.current.value);
-    payload.append("subject", subject.current.value);
-    // payload.append("image", file);
-
-    UpdateClasss(payload);
   };
-
-  const currencies = [
-    {
-      value: "School",
-      label: "School",
-    },
-    {
-      value: "Class",
-      label: "Class",
-    },
-  ];
 
   return (
-    <Dialog
-      open={showCreatePopup}
-      onClose={closeshowCreatePopup}
-      fullWidth
-      maxWidth="sm"
+    <Popup
+      funcshowPopup={showCreatePopup}
+      closeshowPopup={closeshowCreatePopup}
+      title={data ? t("update_school") : t("create_school")}
+      url={"../../public/SchoolDefault.jpg"}
     >
-      <DialogTitle>
-        {" "}
-        {school != null
-          ? "Edit School School/Class"
-          : "Create School/Class"}{" "}
-        <IconButton onClick={() => { closeshowCreatePopup() }} style={{ float: "right" }}>
-          <CloseIcon color="primary"></CloseIcon>
-        </IconButton>{" "}
-      </DialogTitle>
-      <DialogContent>
-        <Stack spacing={2} margin={2}>
-          <div className="flex justify-center">
-            {" "}
-            <img
-              src={
-                type == "School"
-                  ? "../../public/SchoolDefault.jpg"
-                  : "../../public/ClassDefault.jpg"
-              }
-              alt="school"
-              style={{ width: "200px", height: "150px" }}
-            ></img>
+      <TextField
+        defaultValue={data ? data.name : ""}
+        inputRef={schoolname}
+        variant="outlined"
+        label={t("school_name")}
+      />
+      <TextField
+        defaultValue={data ? data.address : ""}
+        inputRef={schooladdress}
+        variant="outlined"
+        label={t("address")}
+      />
+      <div style={{ margin: 'auto', marginTop: '15px' }}>
+        <input
+          id="school-img-input"
+          type="file"
+          accept="image/*"
+          ref={schoolimgInput}  // Reference to the input element
+          style={{ display: "none" }}
+          key={fileKey}
+          onChange={handleFileChange}
+        />
+        <Button variant="contained" component="span" onClick={handleFileClick}>
+          <CloudUploadIcon sx={{ marginRight: '10px' }} /> {t("select_school_image")}
+        </Button>
+        <div style={{ margin: '15px' }}>{selectedFileName}</div>
+        {selectedFileURL && (
+          <div>
+            <img src={selectedFileURL} alt="Selected" style={{ width: '100px', height: '100px', marginTop: '10px' }} />
+            <IconButton onClick={handleRemoveImage}>
+              <CloseIcon />
+            </IconButton>
           </div>
-          <TextField
-            id="outlined-select-currency"
-            select
-            label="Select"
-            defaultValue={type}
-            disabled={(school != null)|| (where=='school')}
-            helperText="Please select your Type of School/Class"
-            onChange={(e) => setType(e.target.value)}
-          >
-            {currencies.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
-
-          {type == "School" ? (
-            <Schoolcreation
-              school={school}
-              schoolname={schoolname}
-              schooladdress={schooladdress}
-              schoolimg={schoolimg}
-              onUpdate={onUpdate}
-              onSubmit={onSubmit}
-              isLoading={isLoading}
-              isUpdating={isUpdating}
-            />
-          ) : (
-            <Classcreation
-              classname={classname}
-              grade_level={grade_level}
-              subject={subject}
-              // schoolimg={schoolimg}
-             school={school}
-              onUpdate={onupdateClass}
-              onSubmit={submitClass}
-              isLoading={classloading}
-              isUpdating={isUpdatingclass}
-            />
-          )}
-        </Stack>
-      </DialogContent>
-      <DialogActions></DialogActions>
-    </Dialog>
+        )}
+      </div>
+      <Button
+        color="primary"
+        variant="contained"
+        onClick={onSubmit}
+        disabled={LoadingCreate || isUpdating}
+      >
+        {LoadingCreate || isUpdating ? (data ? `${t("update_school")}...` : `${t("create_school")}...`) : (data ? `${t("update_school")}` : `${t("create_school")}`)}
+      </Button>
+    </Popup>
   );
 }
 

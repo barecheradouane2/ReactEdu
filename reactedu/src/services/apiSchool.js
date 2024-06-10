@@ -20,9 +20,9 @@ export async function CreateSchool(payload) {
   }
 }
 
-export async function DeleteSchool(id) {
+export async function DeleteSchool(payload) {
   try {
-    const response = await axiosClient.delete(`/schools/${id}`);
+    const response = await axiosClient.delete(`/schools/${payload.id}`);
     return response.data;
   } catch (error) {
     console.error("Error for deleting school :", error);
@@ -31,10 +31,12 @@ export async function DeleteSchool(id) {
 }
 
 export async function UpdateSchool(payload) {
+  console.log("payload",payload.get("school_id"));
   try {
-    const response = await axiosClient.put(`/schools/${payload.id}`, payload,{
+    const response = await axiosClient.post(`/schools/${payload.get("school_id")}`, payload,{
       headers: {
         'Content-Type': 'multipart/form-data',
+        "Accept": "application/json",
       },
     });
     return response.data;
@@ -91,6 +93,17 @@ export async function LeaveSchool(id) {
     return response.data;
   } catch (error) {
     console.error("Error for LeaveSchool :", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+
+
+export async function verifyschool(payload) {
+  try {
+    const response = await axiosClient.post(`/schools/${payload.id}/request/verification`, payload.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error for verifying school :", error);
     throw error; // Rethrow the error to be handled by the caller
   }
 }

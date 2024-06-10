@@ -7,9 +7,8 @@ import NotFound from "./views/NotFound";
 import Signup from "./views/Signup";
 import Schools from "./views/schools.jsx";
 import JoinSchool from "./views/JoinSchool.jsx";
-import ClassComponent from "./views/ClassComponent.jsx"; 
-// Import ClassComponent or replace with your actual component
-import Home from "./views/Home.jsx";
+import ClassComponent from "./views/ClassComponent.jsx";
+import AllSchools from "./views/AllSchools.jsx";
 import School from "./views/School.jsx";
 import Addchild from "./views/Addchild.jsx";
 import BookMarks from "./views/BookMarks.jsx";
@@ -19,99 +18,151 @@ import Classes from "./views/Classes.jsx";
 import Settings from "./views/Settings.jsx";
 import Members from "./views/Members.jsx";
 import JoinRequests from "./views/JoinRequests.jsx";
-
-
+import Home from "./views/Home.jsx";
+import Explore from "./views/Explore.jsx";
+import Associate from "./views/Associate.jsx";
+import ClassInfo from "./views/ClassInfo.jsx";
+import ClassMembers from "./views/ClassMembers.jsx";
+import ClassAssociate from "./views/ClassAssociate.jsx";
+import ClassJoinRequests from "./views/ClassJoinRequests.jsx";
+import Forgotpassword from "./views/Forgotpassword.jsx";
+import ClassList from "./views/ClassList.jsx";
+import SchoolList from "./views/SchoolList.jsx";
 
 const router = createBrowserRouter([
   {
-    path: "/", // Handle the root path
+    path: "/",
     element: <DefaultLayout />,
     children: [
       {
-        path: "/", // Redirect to "/schools"
-        element: <Navigate to="/schools" />,
+        path: "/",
+        element: <Navigate to="/home/explore" />,
       },
-      
       {
-        path: "/schools",
+        path: "/home",
         element: <Home />,
         children: [
           {
-            path: "/schools", // Redirect to "/schools"
-            element: <Schools />,
+            path: "explore",
+            element: <Explore />,
           },
           {
-            path: ":schoolname", // Dynamic parameter for school name
-            element: <JoinSchool />,
+            path: "schools",
+            element: <AllSchools />,
             children: [
               {
-                path: "/schools/:schoolname", // Redirect to first class
-                element: <School />,
-
+                path: "",
+                element: <Schools />,
               },
               {
-                path: ":classname", // Route for class name
-                element: <ClassComponent />,
-              },
-              {
-                path: "addchild",
-                element: <Addchild />,
-              },
-              
-              {
-                path: "bookmarks",
-                element: <BookMarks />,
-              },
-              {
-                path: "calender",
-                element: <Calender />,
-              },
-              {
-                path: "children",
-                element: <Children />,
-              },
-              {
-                path: "classes",
-                element: <Classes />,
-              },
-              {
-                path: "joinrequests",
-                element: <JoinRequests />,
-              },
-              {
-                path: "Members",
-                element: <Members />,
-              },
-              {
-                path: "settings",
-                element: <Settings />,
+                path: ":schoolname",
+                element: <JoinSchool />,
+                children: [
+                  {
+                    path: "",
+                    element: <School />,
+                  },
+                  {
+                    path: "addchild",
+                    element: <Addchild />,
+                  },
+                  {
+                    path: "bookmarks",
+                    element: <BookMarks />,
+                  },
+                  {
+                    path: "calendar",
+                    element: <Calender />,
+                  },
+                  {
+                    path: "associate",
+                    element: <Associate />,
+                  },
+                  {
+                    path: "classes",
+                    element: <Classes />,
+                  },
+                  {
+                    path: "joinrequests",
+                    element: <JoinRequests />,
+                  },
+                  {
+                    path: "members",
+                    element: <Members />,
+                  },
+                  {
+                    path: "settings",
+                    element: <Settings />,
+                  },
+                  {
+                    path: "classes/:classname",
+                    element: <ClassComponent />,
+                    children: [
+                      {
+                        path: "",
+                        element: <ClassInfo />,
+                      },
+                      {
+                        path: "members",
+                        element: <ClassMembers />,
+                      },
+                      {
+                        path: "associate",
+                        element: <ClassAssociate />,
+                      },
+                      {
+                        path: "joinrequests",
+                        element: <ClassJoinRequests />,
+                      },
+                    ],
+                  },
+                ],
               },
             ],
           },
           {
-            path: ":classname",
+            path: "bookmarks",
+            element: <BookMarks />,
+          },
+          {
+            path: "children",
+            element: <Children />,
+          },
+          {
+            path: "classes",
             element: <Classes />,
+          },
+          {
+            path:"classlist",
+            element:<ClassList/>
+          },
+          {
+            path:"schoollist",
+            element:<SchoolList/>
           }
         ],
       },
     ],
   },
   {
-    path: "/", // Handle routes not matched above
+    path: "/",
     element: <GuestLayout />,
     children: [
       {
-        path: "/login",
+        path: "login",
         element: <Login />,
       },
       {
-        path: "/register",
+        path: "register",
         element: <Signup />,
+      },{
+        path: "Forgotpassword",
+        element: <Forgotpassword />,
       },
     ],
   },
   {
-    path: "*", // Handle not found page
+    path: "*",
     element: <NotFound />,
   },
 ]);

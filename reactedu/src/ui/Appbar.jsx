@@ -10,15 +10,12 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Box } from "@mui/system";
 import Badge from "@mui/material/Badge";
 import MailIcon from "@mui/icons-material/Mail";
-// import NotificationsIcon from "@mui/icons-material/Notifications";
 import * as React from "react";
-
 import { Avatar } from "@mui/material";
 import { deepOrange } from "@mui/material/colors";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Notification from "./Notification";
 import { useState } from "react";
-
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -27,42 +24,25 @@ import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import { IoIosChatbubbles } from "react-icons/io";
-
 import Chaticon from "../assets/icons/Chaticon";
 import Notificationicon from "../assets/icons/Notificationicon";
-
 import Logout from "@mui/icons-material/Logout";
 import { useStateContext } from "../context/ContextProvider";
+import MenuLanguage from "../utlis/MenuLanguage";
+import { useTranslation } from "react-i18next";
+import ChangeLanguageIcon from "../assets/icons/ChangeLanguageIcon";
+import { IoInformationCircleOutline } from "react-icons/io5";
+import { MdChangeCircle } from "react-icons/md";
 
-function Appbar({ drawerWidth, funshowdrawer }) {
+function Appbar({ drawerWidth, funshowdrawer, handleditinfo, closeeditinfo }) {
   const [notif, setnotifi] = useState(false);
-  const { user, token, setUser, setToken } = useStateContext();
-  console.log(user);
-
-  const notification = [
-    {
-      id: 1,
-      first_name: "John",
-      last_name: "Doe",
-      message: "john he want to join the school",
-    },
-    {
-      id: 2,
-      first_name: "wassim",
-      last_name: "hamdi",
-      message:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, voluptatem.",
-    },
-    {
-      id: 3,
-      first_name: "anis",
-      last_name: "nejoah",
-      message:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos, voluptatem.",
-    },
-  ];
-
+  const { user, token, setUser, setToken, setprofileinfo } = useStateContext();
+  const [openlanguage, setOpenlanguage] = React.useState(false);
+  const { t, i18n } = useTranslation();
+  const isArabic = i18n.language === "ar";
+  const { profileinfo } = useStateContext();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [showadditon, setshowadditon] = useState(false);
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -74,20 +54,24 @@ function Appbar({ drawerWidth, funshowdrawer }) {
   const handlelogout = () => {
     localStorage.removeItem("ACCESS_TOKEN");
     localStorage.removeItem("UserInfo");
+    localStorage.removeItem("profileinfo");
     setToken(null);
     setUser(null);
-
+    setprofileinfo(null);
     console.log("logout");
   };
+  const handleadditional = () => {
+    setshowadditon(!showadditon);
+  };
+
   return (
     <>
       <AppBar
         position="fixed"
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          marginLeft: { xs: 0, sm: `${drawerWidth}px` },
-          // marginBottom: "50px",
-
+          marginLeft: isArabic ? { xs: 0 } : { xs: 0, sm: `${drawerWidth}px` },
+          marginRight: isArabic ? { xs: 0, sm: `${drawerWidth}px` } : { xs: 0 },
           backgroundColor: "white",
           display: "flex",
           justifyContent: "space-between",
@@ -99,10 +83,6 @@ function Appbar({ drawerWidth, funshowdrawer }) {
             justifyContent: { xs: "space-between", sm: "space-between" },
           }}
         >
-          {/* <Typography variant="h6" component="div" >
-            News
-          </Typography> */}
-
           <IconButton
             sx={{ display: { xs: "block", sm: "none" } }}
             onClick={() => {
@@ -111,84 +91,55 @@ function Appbar({ drawerWidth, funshowdrawer }) {
           >
             <MenuIcon />
           </IconButton>
-
-          <Box>{drawerWidth === 0 && <img src="../../public/logo.png" />}</Box>
-
-          {/* <ButtonGroup
-            variant="outlined"
-            aria-label="Basic button group"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "flex" } }}
-          >
-            <Button>Explore</Button>
-            <Button>Class Feed</Button>
-            <Button>School Feed</Button>
-          </ButtonGroup> */}
-
+          <Box>{drawerWidth === 0 && <img src="../../public/logo.png" alt="Logo" />}</Box>
           <Box sx={{ display: { xs: "flex" } }}>
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="black"
-            >
-              <Badge badgeContent={4} color="error">
-                <div
-                  style={{
-                    backgroundColor: "#E9E9E9",
-                    // width: "50px",
-                    // height: "50px",
-                    padding: "12px 12px",
-                    borderRadius: "50%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+            <MenuLanguage />
+            {profileinfo.is_verified && (
+              <>
+                <IconButton size="large" aria-label="show 4 new mails" color="black">
+                  <Badge badgeContent={4} color="error">
+                    <div
+                      style={{
+                        backgroundColor: "#E9E9E9",
+                        padding: "12px 12px",
+                        borderRadius: "50%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Chaticon />
+                    </div>
+                  </Badge>
+                </IconButton>
+                <IconButton
+                  size="large"
+                  aria-label="show 17 new notifications"
+                  color="black"
+                  onClick={() => {
+                    setnotifi(!notif);
                   }}
                 >
-                  <Chaticon />
-                </div>
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="black"
-              onClick={() => {
-                setnotifi(!notif);
-              }}
-            >
-              <Badge
-                badgeContent={notification.length}
-                color="error"
-                sx={{ display: "flex", alignItems: "center" }}
-              >
-                <div
-                  style={{
-                    backgroundColor: "#E9E9E9",
-                    // width: "50px",
-                    // height: "50px",
-                    padding: "12px 12px",
-                    borderRadius: "50%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Notificationicon sx={{}} />
-                </div>
-              </Badge>
-            </IconButton>
-
-            <Typography
-              variant="h8"
-              sx={{ mt: "10px", ml: "12px", mr: "8px", color: "black" }}
-            ></Typography>
-            {/* <Avatar
-            sx={{ bgcolor: deepOrange[500] }}
-              alt="Remy Sharp"
-             src="/broken-image.jpg"
-             >
-            B
-           </Avatar> */}
-
+                  <Badge
+                    color="error"
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    <div
+                      style={{
+                        backgroundColor: "#E9E9E9",
+                        padding: "12px 12px",
+                        borderRadius: "50%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Notificationicon />
+                    </div>
+                  </Badge>
+                </IconButton>
+              </>
+            )}
             <Tooltip title="Account settings">
               <IconButton
                 onClick={handleClick}
@@ -200,12 +151,11 @@ function Appbar({ drawerWidth, funshowdrawer }) {
               >
                 <Avatar
                   sx={{ bgcolor: deepOrange[500] }}
-                  alt="Remy Sharp"
-                  src="/broken-image.jpg"
+                  alt={`${profileinfo?.first_name} ${profileinfo?.last_name}`}
+                  src={profileinfo?.profile_picture ? profileinfo.profile_picture : ""}
                 ></Avatar>
               </IconButton>
             </Tooltip>
-
             <Menu
               anchorEl={anchorEl}
               id="account-menu"
@@ -241,36 +191,39 @@ function Appbar({ drawerWidth, funshowdrawer }) {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              <MenuItem onClick={handleClose}>
-                <Avatar /> Profile
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <Avatar /> My account
-              </MenuItem>
+              {profileinfo.is_verified && [
+                <MenuItem key="profile" onClick={handleClose}>
+                  <Avatar /> {profileinfo?.first_name} {profileinfo?.last_name}
+                </MenuItem>,
+                <MenuItem key="settings" onClick={handleadditional}>
+                  <Settings />
+                  <span style={{ marginLeft: "10px" }}>{t("manage_profile")}</span>
+                </MenuItem>,
+                <MenuItem key="edit-info" onClick={handleditinfo}>
+                  <ListItemIcon>
+                    <IoInformationCircleOutline size={25} />
+                  </ListItemIcon>
+                  {t("edit_information")}
+                </MenuItem>,
+                <MenuItem key="change-password" onClick={handleClose}>
+                  <ListItemIcon>
+                    <MdChangeCircle size={25} />
+                  </ListItemIcon>
+                  {t("change_password")}
+                </MenuItem>,
+              ]}
               <Divider />
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon>
-                  <PersonAdd fontSize="small" />
-                </ListItemIcon>
-                Add child
-              </MenuItem>
-              <MenuItem onClick={handleClose}>
-                <ListItemIcon>
-                  <Settings fontSize="small" />
-                </ListItemIcon>
-                Settings
-              </MenuItem>
-              <MenuItem onClick={()=>handlelogout()}>
+              <MenuItem key="logout" onClick={handlelogout}>
                 <ListItemIcon>
                   <Logout fontSize="small" />
                 </ListItemIcon>
-                Logout
+                {t("logout")}
               </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
       </AppBar>
-      {notif && <Notification notification={notification} />}
+      {notif && <Notification />}
     </>
   );
 }

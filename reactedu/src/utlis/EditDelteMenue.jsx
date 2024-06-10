@@ -7,51 +7,49 @@ import { useState } from "react";
 import CreateSchoolPopup from "../ui/CreateSchoolPopup";
 import { useStateContext } from "../context/ContextProvider";
 import { toast } from "react-hot-toast";
+import ConfirmationModal from "../utlis/ConfirmationModal";
+import { useTranslation } from "react-i18next";
 
 const ITEM_HEIGHT = 48;
 
-function EditDelteMenue({ school, deleteSchool }) {
+function EditDelteMenue({funcshowCreatePopup,setdata, dataItem, deleteItem,type 
+}) {
   const [showCreatePopup, setShowCreatePopup] = useState(false);
+  const [showconfirm,setshowconfirm]=useState(false); 
+  
   const { user, setUser } = useStateContext();
+  const{t}=useTranslation();
+
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const funcshowCreatePopup = () => {
+  const funPopup = () => {
     setShowCreatePopup(true);
   };
-  const closeshowCreatePopup = () => {
-    setShowCreatePopup(false);
-  };
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
 
   const handleUpdate = () => {
+    funPopup();
     funcshowCreatePopup();
     handleClose();
+    setdata(dataItem);
+    console.log("this is the data that can be update",dataItem);
 
     // updateSchool(school.id);
    
   };
 
   const handleDelete = () => {
-    deleteSchool(school.id, {
-      onSuccess: () => {
-        handleClose();
-        // setschools((prevSchools) =>
-        //   prevSchools.filter((item) => item.id !== school.id)
-        // );
-       
-
-      },
-      onError: () => {
-        toast.error("Failed to delete school");
-      },
-    });
+    setshowconfirm(true); 
+    handleClose();
   };
 
   return (
@@ -68,12 +66,7 @@ function EditDelteMenue({ school, deleteSchool }) {
         <MoreVertIcon />
       </IconButton>
 
-      <CreateSchoolPopup
-        school={school}
-        showCreatePopup={showCreatePopup}
-        closeshowCreatePopup={closeshowCreatePopup}
-      />
-
+      <ConfirmationModal open={showconfirm} message={type=='school'?t("confirm_delete"):t("confirm_delete_class")} onConfirm={()=>deleteItem({id:dataItem.id})} onCancel={() => setshowconfirm(false)} />
       <Menu
         id="long-menu"
         MenuListProps={{
@@ -89,8 +82,8 @@ function EditDelteMenue({ school, deleteSchool }) {
           },
         }}
       >
-        <MenuItem onClick={handleUpdate}>Edit</MenuItem>
-        <MenuItem onClick={handleDelete}>Delete</MenuItem>
+        <MenuItem onClick={handleUpdate}>{type=='school'?t("edit_school"):t("update_class")}</MenuItem>
+        <MenuItem onClick={handleDelete}>{type=='class'?t("delete2"):t("delete1")}</MenuItem>
       </Menu>
     </div>
   );

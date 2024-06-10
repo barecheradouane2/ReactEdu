@@ -17,9 +17,11 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { JoinSchoolWithCode } from "../services/apiSchoolRequest";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 function JoinSchoolPopup({ showJoinPopup, toggleJoinPopup }) {
   const Code = useRef(null);
+  const{t}=useTranslation();
 
   const queryClient = useQueryClient();
   //it work porperly
@@ -58,12 +60,12 @@ function JoinSchoolPopup({ showJoinPopup, toggleJoinPopup }) {
         ></img>
       </div>
       <div className="flex justify-content gap-2">
-        <TextField inputRef={Code} variant="outlined" label="Code"></TextField>
+        <TextField inputRef={Code} variant="outlined" label={t('code')}></TextField>
 
         {/* <InputFileUpload inputRef={schoolimg}/> */}
 
         <Button color="primary" variant="contained" onClick={() => onjoin()}>
-          Join
+         {t('join_school')}
         </Button>
       </div>
     </div>

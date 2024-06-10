@@ -19,8 +19,7 @@ import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import SettingsIcon from "@mui/icons-material/Settings";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import LogoutIcon from '@mui/icons-material/Logout';
-
+import LogoutIcon from "@mui/icons-material/Logout";
 
 import { useParams } from "react-router-dom";
 import SearchInput from "./SearchInput";
@@ -30,11 +29,24 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { LeaveSchool } from "../services/apiSchool";
 import { toast } from "react-hot-toast";
-
+import { useTranslation, initReactI18next } from "react-i18next";
+import { useStateContext } from "../context/ContextProvider";
+import SearchSchoolPopup from "./SearchSchoolPopup";
 
 function Drawers({ drawerWidth, showdrawer, drawertype, funclosedrawer }) {
+  const { t, i18n } = useTranslation();
+  const { profileinfo } = useStateContext();
+  // let schooladmin=0;
+  // if (profileinfo) {
+  //    schooladmin = profileinfo.owned_school?.schooladmin;
+  //   // Use schooladmin here
+  // } else {
+  // }
+  // const {schooladmin}=profileinfo?.owned_school;
+
   const [active, setActive] = useState("School");
-    const Navigate=useNavigate();
+
+  const Navigate = useNavigate();
   function handleactive(params) {
     setActive(params);
   }
@@ -51,6 +63,9 @@ function Drawers({ drawerWidth, showdrawer, drawertype, funclosedrawer }) {
   const location = useLocation();
   const { school_id } = location.state;
   const { schoolName } = useParams();
+
+  const isAdminOfschool=profileinfo?.owned_school.id==school_id?true:false;
+
 
   const queryClient = useQueryClient();
   const { isLoading, mutate: leaveSchool } = useMutation({
@@ -70,6 +85,8 @@ function Drawers({ drawerWidth, showdrawer, drawertype, funclosedrawer }) {
     Navigate("/schools");
   }
 
+
+
   return (
     <Drawer
       sx={{
@@ -84,7 +101,7 @@ function Drawers({ drawerWidth, showdrawer, drawertype, funclosedrawer }) {
         },
       }}
       variant={drawertype}
-      anchor="left"
+      anchor={i18n.language === "ar" ? "right" : "left"}
       open={true}
       onClose={() => {
         funclosedrawer();
@@ -102,162 +119,173 @@ function Drawers({ drawerWidth, showdrawer, drawertype, funclosedrawer }) {
 
       <List>
         <Link
-          to={`/schools/${schoolname}`}
+          to={`/home/schools/${schoolname}`}
           state={{ school_id: school_id }}
           style={{ textDecoration: "none" }}
         >
-          <ListItem
-           disablePadding
-          >
+          <ListItem disablePadding>
             <ListItemButton
               onClick={() => {
                 handleactive("School");
-              }}    
+              }}
             >
               <ListItemIcon>
                 <SchoolIcon />
               </ListItemIcon>
-              <ListItemText primary="School"  sx={{
-              
-              color: active === "School" ? "var(--color-blue-700)" : "",
-            }} />
+              <ListItemText
+                primary={t("school")}
+                sx={{
+                  color: active === "School" ? "var(--color-blue-700)" : "",
+                }}
+              />
             </ListItemButton>
           </ListItem>
         </Link>
 
         <Link
-          to="/schools"
+          to="/home/schools"
           state={{ school_id: school_id }}
           style={{ textDecoration: "none" }}
         >
           <ListItem disablePadding>
-            <ListItemButton   
-            onClick={() => { handleactive("Home") }}
+            <ListItemButton
+              onClick={() => {
+                handleactive("Home");
+              }}
             >
               <ListItemIcon>
                 <HomeIcon />
               </ListItemIcon>
-              <ListItemText primary="Home"  sx={{
-              
-              color: active === "Home" ? "var(--color-blue-700)" : "",
-            }} />
+              <ListItemText
+                primary={t("home")}
+                sx={{
+                  color: active === "Home" ? "var(--color-blue-700)" : "",
+                }}
+              />
             </ListItemButton>
           </ListItem>
         </Link>
 
         <Link
-          to={`/schools/${schoolname}/classes`}
+          to={`/home/schools/${schoolname}/classes`}
           state={{ school_id: school_id }}
           style={{ textDecoration: "none" }}
         >
           <ListItem disablePadding>
-            <ListItemButton  onClick={()=>handleactive('Classes')  }>
+            <ListItemButton onClick={() => handleactive("Classes")}>
               <ListItemIcon>
                 <GroupIcon />
               </ListItemIcon>
-              <ListItemText primary="Classes"  sx={{
-              
-              color: active === "Classes" ? "var(--color-blue-700)" : "",
-            }}/>
+              <ListItemText
+                primary={
+                  profileinfo.role == "teacher" || profileinfo.role == "admin"
+                    ?t("manage_classes") 
+                    : t("classes")
+                }
+                sx={{
+                  color: active === "Classes" ? "var(--color-blue-700)" : "",
+                }}
+              />
             </ListItemButton>
           </ListItem>
         </Link>
 
-        <Link
-          to={`/schools/${schoolname}/Members`}
-          state={{ school_id: school_id }}
-          style={{ textDecoration: "none" }}
-        >
-          <ListItem disablePadding>
-            <ListItemButton  onClick={()=>handleactive('Members')}>
-              <ListItemIcon>
-                <Diversity3Icon />
-              </ListItemIcon>
-              <ListItemText primary="Members"   sx={{
-              
-              color: active === 'Members' ? "var(--color-blue-700)" : "",
-            }} />
-            </ListItemButton>
-          </ListItem>
-        </Link>
+      
+
+        {isAdminOfschool && (
+          <Link
+            to={`/home/schools/${schoolname}/Members`}
+            state={{ school_id: school_id }}
+            style={{ textDecoration: "none" }}
+          >
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => handleactive("Members")}>
+                <ListItemIcon>
+                  <Diversity3Icon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t("manage_members")}
+                  sx={{
+                    color: active === "Members" ? "var(--color-blue-700)" : "",
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+        )}
 
         <Link
-          to={`/schools/${schoolName}/bookmarks`}
+          to={`/home/schools/${schoolName}/bookmarks`}
           state={{ school_id: school_id }}
           style={{ textDecoration: "none" }}
         >
           <ListItem disablePadding>
-            <ListItemButton onClick={()=>handleactive('BookMarks')}>
+            <ListItemButton onClick={() => handleactive("BookMarks")}>
               <ListItemIcon>
                 <BookmarkAddIcon />
               </ListItemIcon>
-              <ListItemText primary="BookMarks"    sx={{
-              
-              color: active === "BookMarks" ? "var(--color-blue-700)" : "",
-            }}/>
+              <ListItemText
+                primary={t("bookmarks")}
+                sx={{
+                  color: active === "BookMarks" ? "var(--color-blue-700)" : "",
+                }}
+              />
             </ListItemButton>
           </ListItem>
         </Link>
 
         <Divider />
 
-       
+        {profileinfo.role == "parent" && (
+          <Link
+            to={`/home/schools/${schoolname}/Associate`}
+            state={{ school_id: school_id }}
+            style={{ textDecoration: "none" }}
+          >
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => handleactive("ManageChildren")}>
+                <ListItemIcon>
+                  <EscalatorWarningIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t("associate_student")}
+                  sx={{
+                    color:
+                      active === "ManageChildren"
+                        ? "var(--color-blue-700)"
+                        : "",
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+        )}
 
-        <Link
-          to={`/schools/${schoolname}/children`}
-          state={{ school_id: school_id }}
-          style={{ textDecoration: "none" }}
-        >
-          <ListItem disablePadding>
-            <ListItemButton onClick={()=>handleactive('ManageChildren')}>
-              <ListItemIcon>
-                <EscalatorWarningIcon />
-              </ListItemIcon>
-              <ListItemText primary="Associate Student "  sx={{
-              
-              color: active === "ManageChildren" ? "var(--color-blue-700)" : "",
-            }}/>
-            </ListItemButton>
-          </ListItem>
-        </Link>
+        {isAdminOfschool&& (
+          <Link
+            to={`/home/schools/${schoolname}/joinrequests`}
+            state={{ school_id: school_id }}
+            style={{ textDecoration: "none" }}
+          >
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => handleactive("joinrequests")}>
+                <ListItemIcon>
+                  <ManageAccountsIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t("school_requests")}
+                  sx={{
+                    color:
+                      active === "joinrequests" ? "var(--color-blue-700)" : "",
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+        )}
 
-        <Link
-          to={`/schools/${schoolname}/calender`}
-          state={{ school_id: school_id }}
-          style={{ textDecoration: "none" }}
-        >
-          <ListItem disablePadding>
-            <ListItemButton onClick={()=>handleactive('Calender')}>
-              <ListItemIcon>
-                <CalendarMonthIcon />
-              </ListItemIcon>
-              <ListItemText primary="Calender"  sx={{
-              
-              color: active === "Calender" ? "var(--color-blue-700)" : "",
-            }} />
-            </ListItemButton>
-          </ListItem>
-        </Link>
-        <Link
-          to={`/schools/${schoolname}/joinrequests`}
-          state={{ school_id: school_id }}
-          style={{ textDecoration: "none" }}
-        >
-          <ListItem disablePadding>
-            <ListItemButton onClick={()=>handleactive('joinrequests')}>
-              <ListItemIcon>
-                <ManageAccountsIcon />
-              </ListItemIcon>
-              <ListItemText primary="Manage Requests" sx={{
-              
-              color: active === "joinrequests" ? "var(--color-blue-700)" : "",
-            }} />
-            </ListItemButton>
-          </ListItem>
-        </Link>
-
-        <Link
-          to={`/schools/${schoolname}/settings`}
+        {/* <Link
+          to={`/home/schools/${schoolname}/settings`}
           state={{ school_id: school_id }}
           style={{ textDecoration: "none" }}
         >
@@ -272,26 +300,35 @@ function Drawers({ drawerWidth, showdrawer, drawertype, funclosedrawer }) {
             }} />
             </ListItemButton>
           </ListItem>
-        </Link>
+        </Link> */}
       </List>
+  
 
-       <Link
-          to={`/schools/${schoolname}/`}
-          state={{ school_id: school_id }}
-          style={{ textDecoration: "none" }}
-        >
-          <ListItem disablePadding>
-            <ListItemButton onClick={()=>handleaveschool()}>
-              <ListItemIcon>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText primary="Leave School"  sx={{
-              
-              color: active === "LogoutIcon" ? "var(--color-blue-700)" : "",
-            }}/>
-            </ListItemButton>
-          </ListItem>
-        </Link>
+      { !isAdminOfschool && (
+        <Link
+        to={`/home/schools/${schoolname}/`}
+        state={{ school_id: school_id }}
+        style={{ textDecoration: "none" }}
+      >
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => handleaveschool()}>
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary={t("leave1")}
+              sx={{
+                color: active === "LogoutIcon" ? "var(--color-blue-700)" : "",
+              }}
+            />
+          </ListItemButton>
+        </ListItem>
+      </Link>
+
+
+
+      )}
+      
     </Drawer>
   );
 }

@@ -17,12 +17,13 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import JoinSchoolPopup from "./JoinSchoolPopup";
 import JoinClassPopup from "./JoinClassPopup";
+import { useTranslation } from "react-i18next";
 
 import { useState } from "react";
 
 function JoinSchoolClassPopup({ showJoinPopup, toggleJoinPopup }) {
   const [type, setType] = useState(true);
-
+  const {t}=useTranslation();
   return (
     <Dialog
       open={showJoinPopup}
@@ -31,8 +32,8 @@ function JoinSchoolClassPopup({ showJoinPopup, toggleJoinPopup }) {
       maxWidth="sm"
     >
       <DialogTitle>
-        {" "}
-        Join School / Class{" "}
+       {t('join_school')} / {t('join_class')}
+        
         <IconButton onClick={toggleJoinPopup} style={{ float: "right" }}>
           <CloseIcon color="primary"></CloseIcon>
         </IconButton>{" "}
@@ -40,8 +41,8 @@ function JoinSchoolClassPopup({ showJoinPopup, toggleJoinPopup }) {
       <DialogContent>
         <Stack spacing={2} margin={2} sx={{display:'flex',flexDirection:'column',alignItems:'center'}}>
             <dir>
-                <Button  onClick={()=>setType(false)}>Join Class</Button>
-                <Button onClick={()=>setType(true)}>Join School</Button>
+                <Button  onClick={()=>setType(false)}>{t('join_class')}</Button>
+                <Button onClick={()=>setType(true)}>{t('join_school')}</Button>
             </dir>
             {type ? (   <JoinSchoolPopup showJoinPopup={showJoinPopup} toggleJoinPopup={toggleJoinPopup} />) : ( <JoinClassPopup showJoinPopup={showJoinPopup} toggleJoinPopup={toggleJoinPopup} />) }  
          

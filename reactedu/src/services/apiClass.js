@@ -20,9 +20,9 @@ export async function CreateClass(payload) {
   }
 }
 
-export async function DeleteClass(id) {
+export async function DeleteClass(payload) {
   try {
-    const response = await axiosClient.delete(`/classes/${id}`);
+    const response = await axiosClient.delete(`/classes/${payload.id}`);
     return response.data;
   } catch (error) {
     console.error("Error for Deleting Class :", error);
@@ -54,6 +54,36 @@ export async function JoinClassbyCode(payload) {
     return response.data;
   } catch (error) {
     console.error("Error for joinning  Class with code :", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+
+export async function getClassMember(id){
+  try {
+    const response = await axiosClient.get(`/classes/${id}/members`);
+    return response.data;
+  } catch (error) {
+    console.error("Error for getting class members :", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+
+export async function removeMember(payload){
+  try {
+    const response = await axiosClient.post(`/classes/${payload.class_id}/members/${payload.id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error for removing class members :", error);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+
+export async function LeaveClass(payload){
+  try {
+    const response = await axiosClient.post(`/classes/${payload.class_id}/leave`);
+    return response.data;
+  } catch (error) {
+    console.error("Error for leaving class :", error);
     throw error; // Rethrow the error to be handled by the caller
   }
 }

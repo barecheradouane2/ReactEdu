@@ -2,6 +2,7 @@
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { useTranslation } from 'react-i18next';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -15,19 +16,24 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-function InputFileUpload() {
+function InputFileUpload({ref}) {
+
+  const handleFileClick = () => {
+    ref.current.click();
+  };
+  const { t } = useTranslation();
     return (
-        
-            <Button
-              component="label"
-              role={undefined}
-              variant="contained"
-              tabIndex={-1}
-              startIcon={<CloudUploadIcon />}
-            >
-              Upload Image
-              <VisuallyHiddenInput type="file" />
-            </Button>
+      <div>
+      <input
+        type="file"
+        accept="image/*"
+        ref={ref}
+        style={{ display: 'none' }}
+      />
+      <Button variant="contained" component="span" onClick={handleFileClick}>
+        {t("choose_image")}
+      </Button>
+    </div>
           
     )
 }
